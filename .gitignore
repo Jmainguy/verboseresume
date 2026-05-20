@@ -1,0 +1,27 @@
+# Binaries
+/verboseresume
+/resumeGen
+*.exe
+bin/
+goreleaser-dist/
+
+# Private resume data — do not commit
+verboseResume.md
+verboseResume.yaml
+resume.json
+cava*
+tetra*
+tetrascience*
+
+# Generated exports
+*.pdf
+
+# Local/editor
+.DS_Store
+*.swp
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/

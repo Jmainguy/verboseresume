@@ -1,0 +1,36 @@
+{
+  "Name": "Alex Engineer",
+  "Location": "Remote",
+  "Phone": "555-0100",
+  "Email": "alex@example.com",
+  "Website": "https://example.com",
+  "Github": "https://github.com/example",
+  "Summary": "Senior platform engineer. Builds reliable Kubernetes platforms, CI/CD, and observability for product teams.",
+  "Skills": {
+    "Languages": ["Go", "Python", "Bash"],
+    "Cloud & Containers": ["Kubernetes", "AWS", "GCP"],
+    "CI / CD": ["ArgoCD", "GitHub Actions"],
+    "Observability": ["Prometheus", "Grafana"]
+  },
+  "Experience": [
+    {
+      "Title": "Platform Engineer",
+      "Company": "Example Co",
+      "Location": "Remote",
+      "Date": "2022 - Present",
+      "Details": [
+        "Owned internal Kubernetes platform for 40+ services.",
+        "Built GitOps pipelines and Terraform modules used by product teams."
+      ]
+    }
+  ],
+  "Education": [
+    {
+      "Degree": "B.S. Computer Science",
+      "School": "State University",
+      "Location": "USA",
+      "Date": "2018"
+    }
+  ],
+  "Certifications": ["CKA"]
+}

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38" role="img" aria-label="Verbose Resume">
+  <defs>
+    <linearGradient id="vr-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#152a48"/>
+      <stop offset="100%" stop-color="#08111f"/>
+    </linearGradient>
+    <linearGradient id="vr-accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6ee7f9"/>
+      <stop offset="100%" stop-color="#46a3ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="38" height="38" rx="12" fill="url(#vr-bg)"/>
+  <rect x="0.5" y="0.5" width="37" height="37" rx="11.5" fill="none" stroke="rgba(255,255,255,0.22)"/>
+  <line x1="9" y1="12" x2="21" y2="12" stroke="#6ee7f9" stroke-width="2" stroke-linecap="round"/>
+  <line x1="9" y1="19" x2="23" y2="19" stroke="#6ee7f9" stroke-width="2" stroke-linecap="round" opacity="0.72"/>
+  <line x1="9" y1="26" x2="17" y2="26" stroke="#6ee7f9" stroke-width="2" stroke-linecap="round" opacity="0.48"/>
+  <line x1="27" y1="12" x2="27" y2="26" stroke="url(#vr-accent)" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

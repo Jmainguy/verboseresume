@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ template "site-head-icons" . }}
+  <title>404 — {{ .Chrome.SiteName }}</title>
+  <style>
+    {{ template "site-chrome-css" . }}
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      background: #000;
+      color: #f4f8fb;
+    }
+
+    .ocean {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(110, 231, 249, 0.22), transparent 26rem),
+        radial-gradient(circle at 82% 0%, rgba(248, 200, 92, 0.12), transparent 26rem),
+        linear-gradient(135deg, #08111f 0%, #101d32 48%, #152a48 100%);
+    }
+
+    #matrix-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    @keyframes swim-right {
+      0% { transform: translateX(-110vw); opacity: 0; }
+      5% { opacity: 1; }
+      95% { opacity: 1; }
+      100% { transform: translateX(110vw); opacity: 0; }
+    }
+
+    @keyframes swim-left {
+      0% { transform: translateX(110vw); opacity: 0; }
+      5% { opacity: 1; }
+      95% { opacity: 1; }
+      100% { transform: translateX(-110vw); opacity: 0; }
+    }
+
+    @keyframes float-y {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+
+    @keyframes bubble-up {
+      0% { transform: translateY(105vh) translateX(0); opacity: 0; }
+      8% { opacity: 0.85; }
+      92% { opacity: 0.85; }
+      100% { transform: translateY(-15vh) translateX(24px); opacity: 0; }
+    }
+
+    @keyframes bubble-up-alt {
+      0% { transform: translateY(105vh) translateX(0); opacity: 0; }
+      8% { opacity: 0.65; }
+      92% { opacity: 0.65; }
+      100% { transform: translateY(-15vh) translateX(-28px); opacity: 0; }
+    }
+
+    @keyframes ghost-404 {
+      0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.14; }
+      50% { transform: scale(1.03) rotate(2deg); opacity: 0.2; }
+    }
+
+    .ascii-drift {
+      position: fixed;
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      white-space: pre;
+      pointer-events: none;
+      z-index: 1;
+      line-height: 1.15;
+      text-shadow: 0 0 12px rgba(110, 231, 249, 0.45);
+    }
+
+    .drift-1 { top: 14%; color: #6ee7f9; font-size: 15px; animation: swim-right 22s linear infinite; }
+    .drift-2 { top: 32%; color: #46a3ff; font-size: 12px; animation: swim-left 28s linear infinite 4s; }
+    .drift-3 { top: 52%; color: #6ee7f9; font-size: 17px; animation: swim-right 26s linear infinite 9s; }
+    .drift-4 { top: 68%; color: #f8c85c; font-size: 11px; animation: swim-left 24s linear infinite 14s; }
+    .drift-5 { top: 78%; left: 12%; color: rgba(110, 231, 249, 0.7); font-size: 13px; animation: float-y 5s ease-in-out infinite; }
+
+    .bubble {
+      position: fixed;
+      font-family: ui-monospace, monospace;
+      color: rgba(255, 255, 255, 0.45);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .bubble-1 { left: 10%; font-size: 18px; animation: bubble-up 9s ease-in infinite; }
+    .bubble-2 { left: 28%; font-size: 14px; animation: bubble-up-alt 11s ease-in infinite 1.5s; }
+    .bubble-3 { left: 48%; font-size: 20px; animation: bubble-up 10s ease-in infinite 3s; }
+    .bubble-4 { left: 62%; font-size: 13px; animation: bubble-up-alt 12s ease-in infinite 4.5s; }
+    .bubble-5 { left: 78%; font-size: 16px; animation: bubble-up 9.5s ease-in infinite 2s; }
+    .bubble-6 { left: 88%; font-size: 12px; animation: bubble-up-alt 10.5s ease-in infinite 6s; }
+
+    .shell {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 28px 24px 36px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .site-topbar {
+      margin-bottom: 12px;
+    }
+
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
+    .panel-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .ghost-code {
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(6rem, 28vw, 11rem);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      color: #6ee7f9;
+      animation: ghost-404 6s ease-in-out infinite;
+      user-select: none;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .panel {
+      position: relative;
+      z-index: 1;
+      padding: clamp(28px, 5vw, 44px);
+      border: 1px solid rgba(110, 231, 249, 0.35);
+      border-radius: 28px;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 0 60px rgba(70, 163, 255, 0.25), 0 24px 70px rgba(0, 0, 0, 0.45);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(110, 231, 249, 0.4);
+      background: rgba(110, 231, 249, 0.12);
+      color: #6ee7f9;
+      font-family: ui-monospace, monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      cursor: pointer;
+    }
+
+    h1:hover {
+      color: #6ee7f9;
+    }
+
+    .quip {
+      margin: 0 0 18px;
+      min-height: 3.2em;
+      color: #b8c5d6;
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+
+    .path {
+      margin: 0 0 16px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px dashed rgba(110, 231, 249, 0.35);
+      background: rgba(8, 17, 31, 0.85);
+      color: #6ee7f9;
+      font-family: ui-monospace, monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .path::before {
+      content: "GET ";
+      color: #46a3ff;
+    }
+
+    .log {
+      margin: 0 0 22px;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #08111f;
+      color: #7dd3a8;
+      font-family: ui-monospace, monospace;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      max-height: 7.5em;
+      overflow: hidden;
+    }
+
+    .log .err { color: #f87171; }
+    .log .dim { color: #64748b; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .actions a {
+      padding: 11px 20px;
+      border-radius: 999px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .actions a:hover {
+      transform: translateY(-2px);
+    }
+
+    .actions .primary {
+      background: linear-gradient(135deg, #46a3ff, #1676d2);
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(22, 132, 232, 0.35);
+    }
+
+    .actions .matrix {
+      border: 1px solid rgba(110, 231, 249, 0.45);
+      color: #6ee7f9;
+      background: rgba(110, 231, 249, 0.1);
+    }
+
+    .actions .secondary {
+      border: 1px solid rgba(198, 217, 237, 0.35);
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .hint {
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: #64748b;
+    }
+
+    .site-footer {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="ocean" aria-hidden="true"></div>
+  <canvas id="matrix-bg" aria-hidden="true"></canvas>
+
+  <div class="ascii-drift drift-1">  •───&gt;  lost bullet (tailored out)</div>
+  <div class="ascii-drift drift-2">{ "path": "null", "found": false }</div>
+  <pre class="ascii-drift drift-3">  &gt; verboseResume.md
+  &gt; grep "{{ .RequestPath }}"
+  &gt; exit 404</pre>
+  <div class="ascii-drift drift-4">~~~ PDF page break ate this URL ~~~</div>
+  <pre class="ascii-drift drift-5">   ___
+  /   \   HR parser
+  | ? |   confused
+  \___/</pre>
+
+  <span class="bubble bubble-1">{</span>
+  <span class="bubble bubble-2">"</span>
+  <span class="bubble bubble-3">}</span>
+  <span class="bubble bubble-4">•</span>
+  <span class="bubble bubble-5">[</span>
+  <span class="bubble bubble-6">]</span>
+
+  <div class="shell">
+    {{ template "site-nav" . }}
+    <div class="stage">
+      <div class="panel-wrap">
+        <div class="ghost-code" aria-hidden="true">404</div>
+        <main class="panel">
+          <span class="badge">HTTP 404 / not in upload JSON</span>
+          <h1 id="headline" title="Click for another excuse">Bullet not found.</h1>
+          <p class="quip" id="quip">This URL was never in your verbose resume and did not survive LLM tailoring.</p>
+          <p class="path">{{ .RequestPath }}</p>
+          <pre class="log" id="log"><span class="dim">$</span> curl -s localhost:8080{{ .RequestPath }}
+<span class="err">HTTP/1.1 404 Not Found</span>
+<span class="dim">hint:</span> agents use POST /mcp — browsers get the Matrix</pre>
+          <div class="actions">
+            <a class="primary" href="/">Escape to generator</a>
+            <a class="matrix" href="/mcp">Enter the Matrix (GET /mcp)</a>
+            <a class="secondary" href="/docs">Read the docs</a>
+          </div>
+          <p class="hint">Click the headline for more resume-themed excuses. The fish are JSON fragments. Totally normal.</p>
+        </main>
+      </div>
+    </div>
+    {{ template "site-footer" . }}
+  </div>
+
+  <script>
+    (function () {
+      var quips = [
+        "This URL was never in your verbose resume and did not survive LLM tailoring.",
+        "HR tried to parse this path as JSON. KeyError: career.",
+        "The print stylesheet @page rule hid this route for brevity.",
+        "404: Experience not found. (It was in verboseResume.md, just not here.)",
+        "Your agent called GET. This site prefers POST and existential dread.",
+        "This bullet was removed for fitting on two pages. So was this URL.",
+        "grep returned nothing. Like your cover letter, but faster.",
+        "Schema validation failed: path is not a valid JobDescription match.",
+        "The MCP server is judging you from /mcp. In green."
+      ];
+      var headlines = [
+        "Bullet not found.",
+        "Page break exceeded.",
+        "JSON key missing.",
+        "Tailoring removed this.",
+        "Verbose, but not here.",
+        "404: Not shortlisted."
+      ];
+      var qi = 0;
+      var hi = 0;
+      var headline = document.getElementById("headline");
+      var quip = document.getElementById("quip");
+
+      headline.addEventListener("click", function () {
+        hi = (hi + 1) % headlines.length;
+        qi = (qi + 1) % quips.length;
+        headline.textContent = headlines[hi];
+        quip.textContent = quips[qi];
+      });
+
+      var canvas = document.getElementById("matrix-bg");
+      var ctx = canvas.getContext("2d");
+      var chars = "01{}[]•verboseResume";
+      var fontSize = 14;
+      var drops = [];
+
+      function resizeMatrix() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        drops = new Array(Math.floor(canvas.width / fontSize));
+        for (var i = 0; i < drops.length; i++) {
+          drops[i] = Math.random() * -50;
+        }
+      }
+
+      function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.12)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.font = fontSize + "px monospace";
+        for (var i = 0; i < drops.length; i++) {
+          var text = chars.charAt(Math.floor(Math.random() * chars.length));
+          ctx.fillStyle = Math.random() > 0.98 ? "#46a3ff" : "rgba(110, 231, 249, 0.55)";
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+        requestAnimationFrame(drawMatrix);
+      }
+
+      resizeMatrix();
+      window.addEventListener("resize", resizeMatrix);
+      drawMatrix();
+    })();
+  </script>
+</body>
+</html>

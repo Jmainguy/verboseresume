@@ -1,0 +1,182 @@
+{{ define "classic.html" }}
+  <style>
+    .resume-template-classic {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 44px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #222;
+      background: #fff;
+    }
+    .resume-template-classic header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+    .resume-template-classic h1 {
+      margin: 0;
+      font-size: 31px;
+      letter-spacing: 0.02em;
+      font-weight: 400;
+    }
+    .resume-template-classic .contact {
+      margin-top: 6px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: #555;
+    }
+    .resume-template-classic h2 {
+      margin: 24px 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #999;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #222;
+    }
+    .resume-template-classic p {
+      margin: 0 0 10px;
+    }
+    .resume-template-classic .summary-role {
+      display: block;
+      margin-bottom: 4px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .resume-template-classic .skill-row {
+      display: grid;
+      grid-template-columns: 145px 1fr;
+      gap: 12px;
+      margin-bottom: 5px;
+    }
+    .resume-template-classic .skill-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .resume-template-classic .skill {
+      display: inline;
+    }
+    .resume-template-classic .skill:not(:last-child)::after {
+      content: " · ";
+    }
+    .resume-template-classic .job,
+    .resume-template-classic .edu {
+      margin-bottom: 15px;
+    }
+    .resume-template-classic .job-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      border-bottom: 1px dotted #ccc;
+      padding-bottom: 2px;
+    }
+    .resume-template-classic .job-title {
+      font-weight: 700;
+    }
+    .resume-template-classic .company-date {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: #555;
+      white-space: nowrap;
+    }
+    .resume-template-classic .company {
+      margin-top: 2px;
+      color: #444;
+      font-style: italic;
+    }
+    .resume-template-classic ul {
+      margin: 6px 0 0 20px;
+      padding: 0;
+    }
+    .resume-template-classic li {
+      margin-bottom: 4px;
+    }
+    .resume-template-classic a {
+      color: inherit;
+      text-decoration: none;
+    }
+    @page {
+      margin: 12mm 14mm;
+      size: letter;
+    }
+    @media print {
+      .resume-template-classic {
+        padding: 0;
+      }
+      .resume-template-classic h2 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+      .resume-template-classic header,
+      .resume-template-classic .section-summary,
+      .resume-template-classic .skill-row,
+      .resume-template-classic .job,
+      .resume-template-classic .edu,
+      .resume-template-classic li {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .resume-template-classic p,
+      .resume-template-classic li {
+        orphans: 3;
+        widows: 3;
+      }
+    }
+  </style>
+  <article class="resume-template-classic">
+    <header>
+      <h1>{{ .Name }}</h1>
+      <div class="contact">{{ .Location }} | {{ .Phone }} | <a href="mailto:{{ .Email }}">{{ .Email }}</a> | <a href="{{ .Website }}">{{ .Website }}</a> | <a href="{{ .Github }}">{{ .Github }}</a></div>
+    </header>
+
+    <section class="section-summary">
+      <h2>Profile</h2>
+      {{ range $i, $p := summaryParagraphs .Summary }}
+      <p>{{ if and (eq $i 0) (hasSummaryRoleLead $p) }}<strong class="summary-role">Senior platform engineer.</strong>{{ summaryAfterRoleLead $p }}{{ else }}{{ $p }}{{ end }}</p>
+      {{ end }}
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      {{ range $group, $skills := .Skills }}
+        {{ if gt (len $skills) 0 }}
+        <div class="skill-row">
+          <div class="skill-label">{{ $group }}</div>
+          <div>{{ range $skills }}<span class="skill">{{ . }}</span>{{ end }}</div>
+        </div>
+        {{ end }}
+      {{ end }}
+    </section>
+
+    <section>
+      <h2>Experience</h2>
+      {{ range .Experience }}
+      <div class="job">
+        <div class="job-heading">
+          <div class="job-title">{{ .Title }}</div>
+          <div class="company-date">{{ .Date }}</div>
+        </div>
+        <div class="company">{{ .Company }}, {{ .Location }}</div>
+        <ul>{{ range .Details }}<li>{{ . }}</li>{{ end }}</ul>
+      </div>
+      {{ end }}
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      {{ range .Education }}
+      <div class="edu"><strong>{{ .Degree }}</strong>, {{ .School }} | {{ .Location }} | {{ .Date }}</div>
+      {{ end }}
+    </section>
+
+    <section>
+      <h2>Certifications</h2>
+      <ul>{{ range .Certifications }}<li>{{ . }}</li>{{ end }}</ul>
+    </section>
+  </article>
+{{ end }}

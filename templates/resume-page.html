@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  {{ template "site-head-icons" . }}
+  <title>{{ .Resume.Name }} - Resume</title>
+  <style>
+    {{ template "site-chrome-css" . }}
+    .site-chrome-shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 24px 0;
+      position: relative;
+      z-index: 1;
+    }
+    :root {
+      color-scheme: light;
+      --app-bg: #0f1d32;
+      --app-panel: #ffffff;
+      --app-border: rgba(198, 217, 237, 0.72);
+      --app-text: #172033;
+      --app-muted: #5b667a;
+      --app-blue: #1684e8;
+      --app-blue-dark: #0f5fb6;
+      --app-green: #15803d;
+      --app-cyan: #6ee7f9;
+      --app-gold: #f8c85c;
+      --resume-paper: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(110, 231, 249, 0.28), transparent 26rem),
+        radial-gradient(circle at 82% 0%, rgba(248, 200, 92, 0.18), transparent 26rem),
+        radial-gradient(circle at 72% 76%, rgba(70, 163, 255, 0.2), transparent 30rem),
+        linear-gradient(135deg, #08111f 0%, #101d32 48%, #152a48 100%);
+      color: var(--app-text);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 75%);
+    }
+
+    .app-shell {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .app-header {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 24px 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .app-hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px;
+      border: 1px solid var(--app-border);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(16px);
+    }
+
+    .app-kicker {
+      margin: 0 0 5px;
+      color: #0f67b7;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .app-title {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .app-subtitle {
+      margin: 8px 0 0;
+      color: var(--app-muted);
+      max-width: 62ch;
+      line-height: 1.45;
+    }
+
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .app-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .app-links a {
+      color: #154b82;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 7px 10px;
+      border: 1px solid rgba(21, 75, 130, 0.16);
+      border-radius: 999px;
+      background: rgba(70, 163, 255, 0.1);
+    }
+
+    .app-links a:hover {
+      background: rgba(70, 163, 255, 0.18);
+    }
+
+    .app-toolbar {
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px 16px;
+      max-width: 1120px;
+      margin: 14px auto 22px;
+      padding: 12px 14px;
+      border: 1px solid var(--app-border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      backdrop-filter: blur(12px);
+    }
+
+    .app-toolbar label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      user-select: none;
+    }
+
+    .template-switcher,
+    .paper-switcher {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .app-toolbar input {
+      width: 16px;
+      height: 16px;
+    }
+
+    .app-toolbar select {
+      min-width: 150px;
+      padding: 8px 10px;
+      border: 1px solid var(--app-border);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--app-text);
+      font: inherit;
+    }
+
+    .app-toolbar button {
+      font: inherit;
+      font-weight: 800;
+      padding: 9px 16px;
+      border: 1px solid var(--app-blue);
+      border-radius: 10px;
+      background: var(--app-blue);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .app-toolbar button:hover {
+      background: var(--app-blue-dark);
+    }
+
+    .app-toolbar .secondary-button {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1e40af;
+    }
+
+    .app-toolbar .secondary-button:hover {
+      background: #dbeafe;
+    }
+
+    .app-toolbar .hint {
+      flex: 1 1 260px;
+      margin: 0;
+      color: var(--app-muted);
+      line-height: 1.4;
+      min-width: 0;
+    }
+
+    #resume-editable {
+      width: min(100% - 32px, 980px);
+      margin: 0 auto 26px;
+      background: var(--resume-paper);
+      box-shadow: 0 18px 55px rgba(15, 23, 42, 0.14);
+      position: relative;
+      z-index: 1;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    #resume-editable > article {
+      background: var(--resume-paper);
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    #resume-editable.is-editing {
+      outline: 3px dashed var(--app-green);
+      outline-offset: 8px;
+      border-radius: 4px;
+    }
+
+    @media print {
+      @page {
+        background: var(--resume-paper);
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      html,
+      body {
+        background: var(--resume-paper) !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      body::before {
+        display: none !important;
+      }
+
+      #resume-editable {
+        width: auto;
+        margin: 0;
+        min-height: 100vh;
+        background: var(--resume-paper) !important;
+        box-shadow: none;
+      }
+
+      #resume-editable > article {
+        background: var(--resume-paper) !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-chrome-shell no-print">
+    {{ template "site-nav" . }}
+  </div>
+
+  <header class="app-shell app-header no-print">
+    <div class="app-hero">
+      <div>
+        <p class="app-kicker">{{ .Chrome.SiteName }}</p>
+        <h1 class="app-title">{{ .Resume.Name }}</h1>
+        <p class="app-subtitle">
+          Review the generated resume, make small browser-only edits if needed, then print or save to PDF.
+        </p>
+      </div>
+      <div class="app-badge">Template: {{ .TemplateName }}</div>
+    </div>
+  </header>
+
+  <div class="app-shell app-toolbar no-print" aria-label="Resume tools">
+    <label>
+      <input type="checkbox" id="toggle-edit" />
+      WYSIWYG edit mode
+    </label>
+    <button type="button" id="print-btn">Print / Save as PDF</button>
+    <div class="paper-switcher">
+      <label for="paper-tone">Paper</label>
+      <select id="paper-tone" aria-label="Resume paper color">
+        <option value="#ffffff">Bright white</option>
+        <option value="#fbfaf6">Soft white</option>
+        <option value="#f7f8f2">Cool linen</option>
+        <option value="#f8fbff">Glacier white</option>
+        <option value="#f4f8fb">Mist blue</option>
+        <option value="#f3f7f7">Pearl gray</option>
+        <option value="#f6f8fb">Cotton rag</option>
+      </select>
+    </div>
+    <form class="template-switcher" action="/upload" method="post" enctype="multipart/form-data">
+      <label for="template-switch">Template</label>
+      <select id="template-switch" name="template">
+        {{ range .Templates }}
+        <option value="{{ .File }}"{{ if eq .File $.SelectedTemplateName }} selected{{ end }}>{{ .Name }}</option>
+        {{ end }}
+      </select>
+      <textarea name="resume_json" hidden>{{ .ResumeJSON }}</textarea>
+    </form>
+    <p class="hint">
+      In Chrome, use <strong>More settings</strong> and uncheck <strong>Headers and footers</strong>.
+    </p>
+  </div>
+
+  <main id="resume-editable">
+    {{ .Content }}
+  </main>
+
+  {{ template "site-footer" . }}
+
+  <script>
+    (function () {
+      var root = document.getElementById("resume-editable");
+      var toggle = document.getElementById("toggle-edit");
+      var printBtn = document.getElementById("print-btn");
+      var templateSwitch = document.getElementById("template-switch");
+      var paperTone = document.getElementById("paper-tone");
+      var paperStorageKey = "resumeGenerator.paperTone";
+      if (!root) return;
+
+      function getStoredPaperTone() {
+        try {
+          return window.localStorage && window.localStorage.getItem(paperStorageKey);
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function storePaperTone(color) {
+        try {
+          if (window.localStorage) window.localStorage.setItem(paperStorageKey, color);
+        } catch (error) {
+          // The preview still works when browser storage is unavailable.
+        }
+      }
+
+      function setEditing(on) {
+        root.contentEditable = on ? "true" : "false";
+        root.classList.toggle("is-editing", on);
+        root.setAttribute("spellcheck", on ? "true" : "false");
+        if (toggle) toggle.checked = on;
+        if (!on) root.blur();
+      }
+
+      if (toggle) {
+        toggle.addEventListener("change", function () {
+          setEditing(toggle.checked);
+        });
+      }
+
+      if (printBtn) {
+        printBtn.addEventListener("click", function () {
+          setEditing(false);
+          window.print();
+        });
+      }
+
+      window.addEventListener("beforeprint", function () {
+        setEditing(false);
+      });
+
+      function setPaperTone(color) {
+        if (paperTone && !paperTone.querySelector('option[value="' + color + '"]')) {
+          color = "#ffffff";
+        }
+        document.documentElement.style.setProperty("--resume-paper", color);
+        if (paperTone) paperTone.value = color;
+      }
+
+      if (paperTone) {
+        var savedPaperTone = getStoredPaperTone();
+        if (savedPaperTone) {
+          setPaperTone(savedPaperTone);
+        }
+
+        paperTone.addEventListener("change", function () {
+          setPaperTone(paperTone.value);
+          storePaperTone(paperTone.value);
+        });
+      }
+
+      if (templateSwitch && templateSwitch.form) {
+        templateSwitch.addEventListener("change", function () {
+          templateSwitch.form.submit();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

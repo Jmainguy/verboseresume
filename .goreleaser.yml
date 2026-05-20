@@ -1,0 +1,58 @@
+version: 2
+
+dist: goreleaser-dist
+
+git:
+  ignore_tags:
+    - nightly
+
+snapshot:
+  version_template: "{{ .Tag }}-next"
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: verboseresume
+    main: .
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+    binary: verboseresume
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+kos:
+  - main: .
+    id: verboseresume
+    base_image: cgr.dev/chainguard/static
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    tags:
+      - latest
+      - "{{.Tag}}"
+    bare: true
+    preserve_import_paths: false
+    base_import_paths: true
+    sbom: none
+    labels:
+      org.opencontainers.image.title: verboseresume
+      org.opencontainers.image.description: "Verbose Resume — tailor career JSON into printable HTML resumes"
+      org.opencontainers.image.source: "https://github.com/jmainguy/verboseresume"
+      org.opencontainers.image.licenses: MIT

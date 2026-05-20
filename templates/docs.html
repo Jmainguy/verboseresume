@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ template "site-head-icons" . }}
+  <title>{{ .Chrome.SiteName }} Docs</title>
+  <style>
+    {{ template "site-chrome-css" . }}
+    :root {
+      --bg: #08111f;
+      --panel: rgba(255, 255, 255, 0.94);
+      --text: #102033;
+      --muted: #5b667a;
+      --blue: #1684e8;
+      --border: rgba(198, 217, 237, 0.72);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px 24px 42px;
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(110, 231, 249, 0.26), transparent 26rem),
+        radial-gradient(circle at 82% 0%, rgba(70, 163, 255, 0.18), transparent 26rem),
+        linear-gradient(135deg, #08111f 0%, #101d32 48%, #152a48 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 75%);
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .hero,
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero {
+      padding: clamp(28px, 5vw, 54px);
+      margin-bottom: 20px;
+    }
+
+    .kicker {
+      margin: 0 0 12px;
+      color: #0f67b7;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      margin: 0 0 18px;
+      font-size: clamp(42px, 8vw, 76px);
+      line-height: 0.92;
+      letter-spacing: -0.07em;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      letter-spacing: -0.04em;
+    }
+
+    h3 {
+      margin: 22px 0 8px;
+    }
+
+    p {
+      margin: 0 0 1rem;
+      color: #38475b;
+    }
+
+    code,
+    pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    code {
+      padding: 0.1rem 0.28rem;
+      border-radius: 6px;
+      background: #edf5ff;
+      color: #164e86;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: 16px;
+      border: 1px solid #d7e3f2;
+      border-radius: 16px;
+      background: #f7fbff;
+      color: #172033;
+      white-space: pre;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    .card.full {
+      grid-column: 1 / -1;
+    }
+
+    .steps {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: #38475b;
+    }
+
+    .steps li {
+      margin-bottom: 0.55rem;
+    }
+
+    .callout {
+      padding: 14px 16px;
+      border: 1px solid #bae6fd;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #eff6ff, #ecfeff);
+      color: #1e3a8a;
+    }
+
+    @media (max-width: 820px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    {{ template "site-nav" . }}
+
+    <header class="hero">
+      <p class="kicker">Docs</p>
+      <h1>Build resumes from a long memory.</h1>
+      <p>Verbose Resume is for people who want one truthful, detailed source resume and many focused, polished final resumes. Keep the raw material in Markdown (<code>verboseResume.md</code>), ask an LLM to tailor it for a specific job, then upload the final JSON here and print.</p>
+      <p class="callout">The app processes uploads in memory for the current request. It does not save uploaded resume JSON or custom templates.</p>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Purpose</h2>
+        <p>This site turns structured resume JSON into HTML resumes that can be reviewed, lightly edited in the browser, recolored with subtle paper tones, switched between templates, and saved as PDFs.</p>
+        <p>It is shared as a free community tool.</p>
+      </section>
+
+      <section class="card full">
+        <h2>The verbose resume idea</h2>
+        <ol class="steps">
+          <li>Maintain a private <code>verboseResume.md</code> with more detail than any final resume should include.</li>
+          <li>Use stable headings: <code>## Experience</code>, <code>### Company — Title</code>, <code>#### Notable work</code>, <code>##### Project</code>.</li>
+          <li>Capture projects, tools, incidents, team leadership, metrics, context, and accomplishments while they are fresh.</li>
+          <li>Update it continually, about once a month, because you will forget important details faster than you expect.</li>
+          <li>Ask your agent to review recent prompts, git history, Jira tickets, pull requests, docs, and chat threads, then add evidence-backed notes under the right role.</li>
+          <li>For each job, give <code>verboseResume.md</code> and the job description to your LLM.</li>
+          <li>Ask for upload JSON, preview on this site, then keep revising the JSON with the same bot until it reads right.</li>
+          <li>Print or save PDF when the preview looks good. Use browser edit mode only for tiny layout fixes.</li>
+        </ol>
+      </section>
+
+      <section class="card full">
+        <h2>Verbose resume Markdown format</h2>
+        <p>Do not upload <code>verboseResume.md</code> to the site. It is your long memory; the upload file is concise JSON only.</p>
+        <p>Agents can fetch the full spec via MCP <code>get_verbose_resume_format</code>. In the repository, see <code>docs/VERBOSE-RESUME.md</code> and the example <code>verboseResume.md</code>.</p>
+        <pre># Your Name — Verbose Resume
+
+## Contact
+- **Email:** you@example.com
+
+## Summary
+Long-form narrative.
+
+## Skills
+### Languages
+- Go
+
+## Experience
+### Company — Title
+**Dates:** Apr 2024 – Present | **Location:** Remote
+
+#### Overview
+Role scope.
+
+#### Notable work
+##### Project name
+Deliverables and tools.</pre>
+      </section>
+
+      <section class="card full" id="upload-json-format">
+        <h2>Upload JSON format</h2>
+        <p>The upload file is the concise final resume. It should match this shape:</p>
+        <pre>{
+  "Name": "Your Name",
+  "Location": "City, ST",
+  "Phone": "555-0100",
+  "Email": "you@example.com",
+  "Website": "https://example.com",
+  "Github": "https://github.com/example",
+  "Summary": "Short tailored summary.",
+  "Skills": {
+    "Languages": ["Go", "Python", "Bash"],
+    "Cloud & Containers": ["Kubernetes", "AWS"],
+    "CI / CD": ["GitHub Actions", "ArgoCD"]
+  },
+  "Experience": [
+    {
+      "Title": "Role title",
+      "Company": "Company name",
+      "Location": "Remote",
+      "Date": "Apr 2024 - Present",
+      "Details": ["Tailored bullet focused on the target role."]
+    }
+  ],
+  "Education": [
+    {
+      "Degree": "Degree name",
+      "School": "School name",
+      "Location": "City, ST",
+      "Date": "May 2009"
+    }
+  ],
+  "Certifications": ["Certification name"]
+}</pre>
+      </section>
+
+      <section class="card full">
+        <h2>Tailor with an LLM (JSON loop)</h2>
+        <p>Keep one <code>verboseResume.md</code> as your long memory. For each application, work in a tight loop with ChatGPT, Claude, Gemini, or another assistant—the artifact you iterate on is <strong>upload JSON</strong>, not a second Markdown resume.</p>
+        <ol class="steps">
+          <li>Attach or paste <code>verboseResume.md</code>, the job description, and the upload JSON shape from the section above (or MCP <code>get_upload_json_format</code>).</li>
+          <li>Ask the model for <strong>only</strong> valid upload JSON. Save it as a <code>.json</code> file.</li>
+          <li>Upload that JSON here, pick a template, and review the HTML preview.</li>
+          <li>Not happy with a bullet, emphasis, or length? Paste the <strong>current JSON</strong> back to the same chat with plain-language feedback. Ask for a revised JSON. Re-upload and preview again.</li>
+          <li>When it looks right, print or save PDF. Optional: WYSIWYG edit mode for small wording tweaks in the browser—then fix the JSON in your bot if you want the file to stay in sync.</li>
+        </ol>
+        <p>Do not maintain a parallel Markdown copy of the tailored resume. The verbose Markdown file is the source of truth; the JSON is the tailored snapshot for this job.</p>
+        <p><strong>First pass prompt:</strong></p>
+        <pre>You are helping me tailor my resume for the job description below.
+Use only facts from my verbose resume (verboseResume.md).
+Do not invent employers, dates, tools, credentials, outcomes, metrics,
+citizenship status, clearance, or experience.
+
+Select the most relevant experience, compress it, and output only valid JSON
+matching the Verbose Resume upload format.
+
+Prioritize relevance, truthful impact, short specific bullets, and a resume
+that fits cleanly into one to two pages.
+
+Inputs:
+1. My verbose resume (attached).
+2. The target job description (below).
+3. The Verbose Resume upload JSON spec (below).
+4. Any special constraints I add.
+
+Output only the final JSON.</pre>
+        <p><strong>Revision pass prompt</strong> (after you preview on the site):</p>
+        <pre>Here is my current tailored resume JSON and feedback on the preview.
+
+Revise the JSON only. Keep all facts truthful and supported by my verbose resume.
+Do not invent experience. Output only the complete updated JSON in the same
+upload format—no commentary outside the JSON.
+
+Feedback:
+- [e.g. shorten summary, stronger platform bullets, drop older role]
+
+Current JSON:
+[paste JSON here]</pre>
+      </section>
+
+      <section class="card full">
+        <h2>MCP endpoint</h2>
+        <p>There is a lightweight MCP-compatible JSON-RPC endpoint at <code>/mcp</code>. Guidance tools:</p>
+        <ul class="steps">
+          <li><code>get_resume_generator_guide</code></li>
+          <li><code>get_verbose_resume_format</code></li>
+          <li><code>get_upload_json_format</code></li>
+          <li><code>get_llm_prompt_guide</code></li>
+        </ul>
+        <p>Artifact tool for agents (optional, not the human loop above):</p>
+        <ul class="steps">
+          <li><code>create_resume_artifact</code> turns upload JSON into standalone HTML, normalized JSON, and local PDF instructions for agent-driven workflows.</li>
+        </ul>
+        <p>Humans normally iterate JSON in chat, upload here, and print from the browser. Agents can use MCP tools to read specs and emit JSON the same way.</p>
+      </section>
+    </main>
+
+    {{ template "site-footer" . }}
+  </div>
+</body>
+</html>

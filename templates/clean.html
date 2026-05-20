@@ -1,0 +1,312 @@
+{{ define "clean.html" }}
+  <style>
+    .resume-template-clean {
+      font-family: "Helvetica Neue", Helvetica, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 48px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .resume-template-clean .header {
+      text-align: center;
+    }
+
+    .resume-template-clean .contact p {
+      margin: 4px 0;
+    }
+
+    .resume-template-clean hr.divider {
+      border: none;
+      height: 3px;
+      background-color: #000;
+      margin: 20px 0 40px 0;
+    }
+
+    .resume-template-clean h2 {
+      color: #444;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 5px;
+      margin-top: 2em;
+    }
+
+    .resume-template-clean .section {
+      margin-bottom: 2em;
+    }
+
+    .resume-template-clean .job,
+    .resume-template-clean .edu {
+      margin-bottom: 1.5em;
+    }
+
+    .resume-template-clean .edu-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0 0.15em;
+    }
+
+    .resume-template-clean .edu-degree {
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .resume-template-clean .edu-sep {
+      margin: 0 0.35em;
+      color: #888;
+    }
+
+    .resume-template-clean .edu-school {
+      font-style: italic;
+    }
+
+    .resume-template-clean .edu-loc {
+      color: #444;
+    }
+
+    .resume-template-clean .edu-date {
+      color: #666;
+    }
+
+    .resume-template-clean .job-title {
+      font-weight: bold;
+    }
+
+    .resume-template-clean .company-date {
+      font-style: italic;
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .resume-template-clean .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 0.5em;
+    }
+
+    .resume-template-clean .skill-row {
+      margin-bottom: 0.5em;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .resume-template-clean .skill-row .skill-label {
+      flex: 0 0 auto;
+      font-weight: bold;
+      min-width: 7.5rem;
+    }
+
+    .resume-template-clean .skill-row .skills {
+      margin-top: 0;
+    }
+
+    .resume-template-clean .pill {
+      background-color: #f0f0f0;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      white-space: nowrap;
+      border: 1px solid #ccc;
+    }
+
+    .resume-template-clean ul {
+      margin: 0.5em 0 0 1.5em;
+    }
+
+    .resume-template-clean a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    .resume-template-clean .section-summary h2 {
+      margin-bottom: 0.65rem;
+    }
+
+    .resume-template-clean .summary-body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .resume-template-clean .summary-p {
+      margin: 0 0 1rem 0;
+      padding: 0;
+      max-width: 72ch;
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: #3a3a3a;
+      text-align: left;
+    }
+
+    .resume-template-clean .summary-p-lead .summary-role {
+      display: block;
+      font-weight: 600;
+      font-size: 1.15rem;
+      line-height: 1.35;
+      color: #111;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.01em;
+    }
+
+    .resume-template-clean .summary-p-lead .summary-after-role {
+      display: block;
+    }
+
+    .resume-template-clean .summary-p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ----- Print / PDF (Chrome: Print destination Save as PDF) ----- */
+    @media print {
+      .resume-template-clean {
+        padding: 0;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      @page {
+        margin: 12mm 14mm;
+        size: letter;
+      }
+
+      .resume-template-clean a {
+        color: #000;
+        text-decoration: none;
+      }
+
+      /* Keep section title with the block that follows */
+      .resume-template-clean h2 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      /* Whole summary block together when it fits */
+      .resume-template-clean .section-summary {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      /* One skill category row at a time */
+      .resume-template-clean .skill-row {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      /* One employer / school card at a time */
+      .resume-template-clean .job,
+      .resume-template-clean .edu {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      /* Avoid a single bullet splitting across pages */
+      .resume-template-clean .job li,
+      .resume-template-clean .edu li {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .resume-template-clean .cert-list {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .resume-template-clean p,
+      .resume-template-clean li {
+        orphans: 3;
+        widows: 3;
+      }
+    }
+  </style>
+  <article class="resume-template-clean">
+    <div class="header">
+      <h1>{{.Name}}</h1>
+      <div class="contact">
+        <p>{{.Location}}</p>
+        <p>Phone: {{.Phone}} | Email: <a href="mailto:{{.Email}}">{{.Email}}</a></p>
+        <p>Website: <a href="{{.Website}}">{{.Website}}</a> | GitHub: <a href="{{.Github}}">{{.Github}}</a></p>
+      </div>
+    </div>
+    <hr class="divider">
+
+    <div class="section section-summary">
+      <h2>Summary</h2>
+      <div class="summary-body">
+        {{ range $i, $p := summaryParagraphs .Summary }}
+        {{ if and (eq $i 0) (hasSummaryRoleLead $p) }}
+        <p class="summary-p summary-p-lead"><strong class="summary-role">Senior platform engineer.</strong><span class="summary-after-role">{{ summaryAfterRoleLead $p }}</span></p>
+        {{ else }}
+        <p class="summary-p">{{ $p }}</p>
+        {{ end }}
+        {{ else }}
+        {{ if hasSummaryRoleLead .Summary }}
+        <p class="summary-p summary-p-lead"><strong class="summary-role">Senior platform engineer.</strong><span class="summary-after-role">{{ summaryAfterRoleLead .Summary }}</span></p>
+        {{ else }}
+        <p class="summary-p">{{ .Summary }}</p>
+        {{ end }}
+        {{ end }}
+      </div>
+    </div>
+
+    <div class="section section-skills">
+      <h2>Technical Skills</h2>
+      {{ if .Skills }}
+        <div>
+          {{ range $group, $skills := .Skills }}
+            {{ if gt (len $skills) 0 }}
+              <div class="skill-row">
+                <span class="skill-label">{{ $group }}:</span>
+                <span class="skills">
+                  {{ range $skills }}
+                    <span class="pill">{{ . }}</span>
+                  {{ end }}
+                </span>
+              </div>
+            {{ end }}
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+
+    <div class="section section-experience">
+      <h2>Experience</h2>
+      {{range .Experience}}
+      <div class="job">
+        <div class="job-title">{{.Title}}</div>
+        <div class="company-date">{{.Company}}, {{.Location}} | {{.Date}}</div>
+        <ul>
+          {{range .Details}}<li>{{.}}</li>{{end}}
+        </ul>
+      </div>
+      {{end}}
+    </div>
+
+    <div class="section section-education">
+      <h2>Education</h2>
+      {{range .Education}}
+      <div class="edu">
+        <div class="edu-line">
+          <span class="edu-degree">{{.Degree}}</span>
+          <span class="edu-sep">|</span>
+          <span class="edu-school">{{.School}}</span>
+          {{ if .Location }}
+            <span class="edu-sep">|</span>
+            <span class="edu-loc">{{.Location}}</span>
+          {{ end }}
+          <span class="edu-sep">|</span>
+          <span class="edu-date">{{.Date}}</span>
+        </div>
+      </div>
+      {{end}}
+    </div>
+
+    <div class="section section-certs">
+      <h2>Certifications</h2>
+      <ul class="cert-list">
+        {{range .Certifications}}<li>{{.}}</li>{{end}}
+      </ul>
+    </div>
+  </article>
+{{ end }}

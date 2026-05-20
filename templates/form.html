@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ template "site-head-icons" . }}
+  <title>{{ .Chrome.SiteName }}</title>
+  <style>
+    {{ template "site-chrome-css" . }}
+    :root {
+      --bg: #08111f;
+      --panel: rgba(255, 255, 255, 0.92);
+      --panel-strong: #ffffff;
+      --blue: #46a3ff;
+      --blue-dark: #1676d2;
+      --cyan: #6ee7f9;
+      --gold: #f8c85c;
+      --border: rgba(198, 217, 237, 0.65);
+      --muted: #5b667a;
+      --text: #102033;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 30px 24px 42px;
+      line-height: 1.5;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(110, 231, 249, 0.28), transparent 26rem),
+        radial-gradient(circle at 82% 0%, rgba(248, 200, 92, 0.2), transparent 26rem),
+        radial-gradient(circle at 72% 76%, rgba(70, 163, 255, 0.2), transparent 30rem),
+        linear-gradient(135deg, #08111f 0%, #101d32 48%, #152a48 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 75%);
+    }
+
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      margin-bottom: 24px;
+    }
+
+    .hero-copy,
+    form,
+    .community-card {
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-copy {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 5vw, 54px);
+    }
+
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -96px;
+      bottom: -120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(70, 163, 255, 0.22), transparent 68%);
+    }
+
+    .kicker {
+      margin: 0 0 12px;
+      color: #0f67b7;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 12ch;
+      font-size: clamp(42px, 8vw, 82px);
+      line-height: 0.92;
+      margin: 0 0 20px;
+      letter-spacing: -0.07em;
+    }
+    .hero p {
+      max-width: 62ch;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .intro {
+      color: #38475b;
+      margin: 0;
+      font-size: clamp(1rem, 2vw, 1.18rem);
+    }
+
+    .byline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 24px 0 0;
+      padding: 9px 12px;
+      border: 1px solid rgba(70, 163, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(70, 163, 255, 0.1);
+      color: #0f3f6f;
+      font-weight: 800;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 14px;
+    }
+
+    .link-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .link-card {
+      display: block;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 14px 34px rgba(4, 13, 28, 0.13);
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(70, 163, 255, 0.48);
+      box-shadow: 0 18px 42px rgba(4, 13, 28, 0.18);
+    }
+
+    .link-card strong {
+      display: block;
+      color: #102033;
+      font-size: 1rem;
+    }
+
+    .link-card span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .community-card {
+      padding: 20px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(232, 247, 255, 0.9)),
+        var(--panel-strong);
+    }
+
+    .community-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+
+    .community-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .upload-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel-copy {
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 28px;
+      color: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 55px rgba(0, 0, 0, 0.16);
+      backdrop-filter: blur(14px);
+    }
+
+    .panel-copy h2 {
+      margin: 0 0 10px;
+      color: #fff;
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .panel-copy p {
+      margin: 0 0 16px;
+      color: rgba(255, 255, 255, 0.74);
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    form {
+      margin-top: 0;
+      padding: clamp(22px, 4vw, 32px);
+      background: var(--panel-strong);
+    }
+
+    .form-heading {
+      margin-bottom: 22px;
+    }
+
+    .form-heading h2 {
+      margin: 0 0 6px;
+      font-size: 1.65rem;
+      letter-spacing: -0.03em;
+    }
+
+    .form-heading p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .field {
+      margin-bottom: 1.25rem;
+    }
+    label,
+    .field-label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #bdcadb;
+      border-radius: 14px;
+      background: #fff;
+      font: inherit;
+    }
+    .file-picker-row {
+      padding: 16px;
+      border: 1px dashed #7ea8d8;
+      border-radius: 18px;
+      background: #f8fbff;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+    .file-picker-row:hover {
+      border-color: var(--blue);
+      background: #eff6ff;
+      transform: translateY(-1px);
+    }
+    .file-picker-row.is-dragging {
+      border-color: var(--blue);
+      background: #dbeafe;
+    }
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      font: inherit;
+      cursor: pointer;
+    }
+    .file-name {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .custom-template-field {
+      margin-top: 12px;
+    }
+
+    .custom-template-field[hidden] {
+      display: none;
+    }
+
+    .json-spec-link {
+      margin: 0 0 10px;
+      font-size: 0.92rem;
+    }
+
+    .json-spec-link a {
+      color: #0f67b7;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .json-spec-link a:hover {
+      text-decoration: underline;
+    }
+    button {
+      font: inherit;
+      width: 100%;
+      padding: 13px 20px;
+      border: 1px solid #1578d6;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #1684e8, #0f5fb6);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 800;
+      box-shadow: 0 14px 32px rgba(22, 132, 232, 0.28);
+    }
+    button:hover {
+      background: linear-gradient(135deg, #1f91f5, var(--blue-dark));
+    }
+    @media (max-width: 860px) {
+      .hero,
+      .upload-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    {{ template "site-nav" . }}
+
+    <header class="hero">
+      <section class="hero-copy">
+        <p class="kicker">{{ .Chrome.SiteName }}</p>
+        <h1>{{ .SiteTagline }}</h1>
+        <p class="intro">A free community tool for engineers and job seekers who want a polished PDF without wrestling a word processor.</p>
+        <p class="byline">Built for the community to use, adapt, and share.</p>
+      </section>
+    </header>
+
+    <section class="upload-layout" aria-label="Generate a resume">
+      <div class="panel-copy">
+        <h2>Make the resume, then make it yours.</h2>
+        <p>Start with structured data, choose a layout, tweak the result in the browser, and save it as a PDF when it looks right.</p>
+        <ul class="feature-list">
+          <li>Clean, compact, and classic templates.</li>
+          <li>WYSIWYG edit mode for last-mile copy and spacing fixes.</li>
+        </ul>
+      </div>
+
+      <form action="/upload" method="post" enctype="multipart/form-data">
+        <div class="form-heading">
+          <h2>Generate your resume</h2>
+          <p>Drop in a JSON resume and pick the style that fits the opportunity.</p>
+        </div>
+
+        <div class="field">
+          <p class="json-spec-link"><a href="/docs#upload-json-format">View expected JSON structure</a></p>
+          <div class="field-label">Resume JSON</div>
+          <div class="file-picker-row" data-drop-target="resume">
+            <input id="resume" type="file" name="resume" accept=".json,application/json" required>
+            <span class="file-name" id="resume-file-name">No file selected</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="template">Template</label>
+          <select id="template" name="template">
+            {{ range .Templates }}
+            <option value="{{ .File }}">{{ .Name }}</option>
+            {{ end }}
+            <option value="custom">Custom</option>
+          </select>
+          <div id="custom-template-field" class="custom-template-field" hidden>
+            <div class="file-picker-row" data-drop-target="custom_template">
+              <input id="custom_template" type="file" name="custom_template" accept=".html,text/html">
+              <span class="file-name" id="template-file-name">No file selected</span>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit">Create my resume</button>
+      </form>
+    </section>
+
+    {{ template "site-footer" . }}
+  </div>
+  <script>
+    (function () {
+      function bindFileName(inputId, outputId) {
+        var input = document.getElementById(inputId);
+        var output = document.getElementById(outputId);
+        if (!input || !output) return;
+
+        function updateName() {
+          output.textContent = input.files && input.files.length > 0
+            ? input.files[0].name
+            : "No file selected";
+        }
+
+        input.addEventListener("change", updateName);
+      }
+
+      function bindDropTarget(row) {
+        var input = document.getElementById(row.getAttribute("data-drop-target"));
+        if (!input || !window.DataTransfer) return;
+
+        row.addEventListener("dragover", function (event) {
+          event.preventDefault();
+          row.classList.add("is-dragging");
+        });
+
+        row.addEventListener("dragleave", function () {
+          row.classList.remove("is-dragging");
+        });
+
+        row.addEventListener("drop", function (event) {
+          event.preventDefault();
+          row.classList.remove("is-dragging");
+          if (!event.dataTransfer || event.dataTransfer.files.length === 0) return;
+
+          var files = new DataTransfer();
+          files.items.add(event.dataTransfer.files[0]);
+          input.files = files.files;
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+      }
+
+      function syncTemplateField() {
+        var select = document.getElementById("template");
+        var field = document.getElementById("custom-template-field");
+        var input = document.getElementById("custom_template");
+        var isCustom = select && select.value === "custom";
+        if (!field || !input) return;
+
+        field.hidden = !isCustom;
+        input.required = isCustom;
+        if (!isCustom) {
+          input.value = "";
+          var nameEl = document.getElementById("template-file-name");
+          if (nameEl) nameEl.textContent = "No file selected";
+        }
+      }
+
+      bindFileName("resume", "resume-file-name");
+      bindFileName("custom_template", "template-file-name");
+      document.querySelectorAll("[data-drop-target]").forEach(bindDropTarget);
+
+      var templateSelect = document.getElementById("template");
+      if (templateSelect) {
+        templateSelect.addEventListener("change", syncTemplateField);
+        syncTemplateField();
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+.git
+.github
+*.md
+!docs/VERBOSE-RESUME.md
+Makefile
+.goreleaser.yml
+.ko.yaml
+goreleaser-dist/
+bin/
+*.pdf
+
+# Private/local resume data — never in images
+verboseResume.md
+verboseResume.yaml
+resume.json
+cava*
+tetra*
