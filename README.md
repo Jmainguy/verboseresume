@@ -228,6 +228,27 @@ Published images (on release): `zot.soh.re/verboseresume/verboseresume:latest`
 GitHub Actions (see `.github/workflows/`):
 
 - **CI** on push/PR: lint, test, production build, smoke-test embedded server
-- **Release** on main via release-please: GoReleaser binaries plus `ko` images to GHCR
+- **Release** on main via [release-please](https://github.com/googleapis/release-please): GoReleaser binaries plus `ko` images to `zot.soh.re`
+
+### Commit messages
+
+This repository follows [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). Release-please uses commit types to choose the next semantic version:
+
+| Type | Typical release bump |
+|------|----------------------|
+| `fix:` | patch |
+| `feat:` | minor |
+| `feat!:` or `BREAKING CHANGE:` footer | major |
+
+Examples:
+
+```text
+feat: add classic template preview
+fix: reject empty resume JSON uploads
+docs: clarify verbose resume workflow
+ci: publish images to zot.soh.re
+```
+
+Use `feat:` / `fix:` on `main` when you intend to ship a versioned release.
 
 Do not commit personal resume JSON or `verboseResume.md`—see `.gitignore`. Use `static/sample-upload.json` as a public example only.
