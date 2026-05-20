@@ -105,6 +105,50 @@ func TestUploadHandlerWrapsCustomTemplate(t *testing.T) {
 	}
 }
 
+func TestEmbeddedVerboseDocs(t *testing.T) {
+	if len(strings.TrimSpace(exampleVerboseResumeMarkdown)) < 500 {
+		t.Fatal("embedded example verbose resume is empty or too short; rebuild with current docs/")
+	}
+	if len(strings.TrimSpace(verboseResumeQuestionsMarkdown)) < 500 {
+		t.Fatal("embedded verbose resume questions doc is empty or too short")
+	}
+	if !strings.Contains(exampleVerboseResumeMarkdown, "Alex Rivera") {
+		t.Fatal("embedded example missing expected fictional name")
+	}
+}
+
+func TestDocsEmbedMarkdownHandlers(t *testing.T) {
+	for _, path := range []string{
+		"/docs/embed/example-verbose-resume.md",
+		"/docs/embed/verbose-resume-questions.md",
+	} {
+		req := httptest.NewRequest(http.MethodGet, path, nil)
+		rec := httptest.NewRecorder()
+		switch path {
+		case "/docs/embed/example-verbose-resume.md":
+			exampleVerboseResumeHandler(rec, req)
+		case "/docs/embed/verbose-resume-questions.md":
+			verboseResumeQuestionsHandler(rec, req)
+		}
+		if rec.Code != http.StatusOK {
+			t.Fatalf("%s: expected 200, got %d: %s", path, rec.Code, rec.Body.String())
+		}
+		if ct := rec.Header().Get("Content-Type"); !strings.Contains(ct, "text/plain") {
+			t.Fatalf("%s: expected text/plain, got %q", path, ct)
+		}
+	}
+	body := httptest.NewRecorder()
+	exampleVerboseResumeHandler(body, httptest.NewRequest(http.MethodGet, "/docs/embed/example-verbose-resume.md", nil))
+	if !strings.Contains(body.Body.String(), "Alex Rivera") {
+		t.Fatal("example embed missing Alex Rivera")
+	}
+	q := httptest.NewRecorder()
+	verboseResumeQuestionsHandler(q, httptest.NewRequest(http.MethodGet, "/docs/embed/verbose-resume-questions.md", nil))
+	if !strings.Contains(q.Body.String(), "What company do you work at") {
+		t.Fatal("questions embed missing starter prompt")
+	}
+}
+
 func TestDocsHandler(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/docs", nil)
 	rec := httptest.NewRecorder()
@@ -118,6 +162,12 @@ func TestDocsHandler(t *testing.T) {
 		`Verbose Resume`,
 		`verboseResume.md`,
 		`The verbose resume idea`,
+		`verbose-resume-questions`,
+		`example-verbose-resume`,
+		`/docs/embed/example-verbose-resume.md`,
+		`/docs/embed/verbose-resume-questions.md`,
+		`Alex Rivera`,
+		`get_verbose_resume_questions`,
 		`MCP endpoint`,
 		`Jonathan Mainguy`,
 		`staff augmentation`,
@@ -192,6 +242,8 @@ func TestMCPHandlerListsAndCallsTools(t *testing.T) {
 	for _, want := range []string{
 		`get_resume_generator_guide`,
 		`get_verbose_resume_format`,
+		`get_verbose_resume_questions`,
+		`get_example_verbose_resume`,
 		`get_upload_json_format`,
 		`get_llm_prompt_guide`,
 		`create_resume_artifact`,

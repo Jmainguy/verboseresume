@@ -10,6 +10,12 @@ import (
 //go:embed docs/VERBOSE-RESUME.md
 var verboseResumeFormatMarkdown string
 
+//go:embed docs/VERBOSE-RESUME-QUESTIONS.md
+var verboseResumeQuestionsMarkdown string
+
+//go:embed docs/example-verbose-resume.md
+var exampleVerboseResumeMarkdown string
+
 //go:embed all:static
 var embeddedStatic embed.FS
 

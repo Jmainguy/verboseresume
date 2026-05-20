@@ -194,6 +194,42 @@ func loadVerboseResumeFormatDoc() string {
 	return verboseResumeFormatMarkdown
 }
 
+func loadVerboseResumeQuestionsDoc() string {
+	if strings.TrimSpace(verboseResumeQuestionsMarkdown) == "" {
+		return "# Sample questions\n\nSee docs/VERBOSE-RESUME-QUESTIONS.md\n"
+	}
+	return verboseResumeQuestionsMarkdown
+}
+
+func loadExampleVerboseResumeDoc() string {
+	if strings.TrimSpace(exampleVerboseResumeMarkdown) == "" {
+		return "# Example verbose resume\n\nSee docs/example-verbose-resume.md\n"
+	}
+	return exampleVerboseResumeMarkdown
+}
+
+func serveEmbeddedMarkdown(w http.ResponseWriter, content, filename string) {
+	w.Header().Set("Cache-Control", "no-store, max-age=0")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	if strings.TrimSpace(content) == "" {
+		http.Error(w, "embedded document missing; run: go build -o resumeGen .", http.StatusInternalServerError)
+		return
+	}
+	_, _ = w.Write([]byte(content))
+}
+
+func renderTemplate(w http.ResponseWriter, templateName string, data any, failMsg string) {
+	var buf bytes.Buffer
+	if err := templates.ExecuteTemplate(&buf, templateName, data); err != nil {
+		log.Printf("render %s: %v", templateName, err)
+		http.Error(w, failMsg, http.StatusInternalServerError)
+		return
+	}
+	if _, err := buf.WriteTo(w); err != nil {
+		log.Printf("write %s response: %v", templateName, err)
+	}
+}
+
 func summaryParagraphs(s string) []string {
 	s = strings.TrimSpace(s)
 	if s == "" {
@@ -259,13 +295,28 @@ func main() {
 
 	http.HandleFunc("/", uploadFormHandler)
 	http.HandleFunc("/docs", docsHandler)
+	http.HandleFunc("/docs/embed/verbose-resume-questions.md", verboseResumeQuestionsHandler)
+	http.HandleFunc("/docs/embed/example-verbose-resume.md", exampleVerboseResumeHandler)
 	http.HandleFunc("/mcp", mcpHandler)
 	http.HandleFunc("/upload", uploadHandler)
 	http.Handle("/static/", staticHandler)
 
 	addr := listenAddr()
-	log.Printf("Listening on %s ...", addr)
+	if strings.TrimSpace(exampleVerboseResumeMarkdown) == "" || strings.TrimSpace(verboseResumeQuestionsMarkdown) == "" {
+		log.Printf("warning: embedded docs markdown is empty; run: go build -o resumeGen . && ./resumeGen")
+	}
+	log.Printf("Listening on %s (docs: /docs) ...", displayListenURL(addr))
 	log.Fatal(http.ListenAndServe(addr, nil))
+}
+
+func displayListenURL(addr string) string {
+	if strings.HasPrefix(addr, ":") {
+		return "http://localhost" + addr
+	}
+	if strings.HasPrefix(addr, "http://") || strings.HasPrefix(addr, "https://") {
+		return addr
+	}
+	return "http://" + addr
 }
 
 func uploadFormHandler(w http.ResponseWriter, r *http.Request) {
@@ -274,49 +325,61 @@ func uploadFormHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Cache-Control", "no-store, max-age=0")
-	if err := templates.ExecuteTemplate(w, "form.html", FormData{
+	renderTemplate(w, "form.html", FormData{
 		Chrome:      newSiteChrome("home", "", ""),
 		Templates:   templateOptions,
 		SiteTagline: siteTagline,
-	}); err != nil {
-		log.Printf("render form.html: %v", err)
-		http.Error(w, "Failed to render upload form", http.StatusInternalServerError)
-	}
+	}, "Failed to render upload form")
 }
 
 func docsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-store, max-age=0")
-	data := DocsData{
+	renderTemplate(w, "docs.html", DocsData{
 		Chrome:                newSiteChrome("docs", "", ""),
 		GuideMarkdown:         resumeGeneratorGuide,
 		JSONSchemaMarkdown:    uploadJSONGuide,
 		PromptMarkdown:        llmPromptGuide,
 		VerboseResumeMarkdown: loadVerboseResumeFormatDoc(),
+	}, "Failed to render docs")
+}
+
+func verboseResumeQuestionsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/docs/embed/verbose-resume-questions.md" {
+		notFoundHandler(w, r)
+		return
 	}
-	if err := templates.ExecuteTemplate(w, "docs.html", data); err != nil {
-		http.Error(w, "Failed to render docs", http.StatusInternalServerError)
+	serveEmbeddedMarkdown(w, loadVerboseResumeQuestionsDoc(), "verbose-resume-questions.md")
+}
+
+func exampleVerboseResumeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/docs/embed/example-verbose-resume.md" {
+		notFoundHandler(w, r)
+		return
 	}
+	serveEmbeddedMarkdown(w, loadExampleVerboseResumeDoc(), "example-verbose-resume.md")
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-store, max-age=0")
-	w.WriteHeader(http.StatusNotFound)
 	data := NotFoundData{
 		Chrome:      newSiteChrome("404", "", ""),
 		RequestPath: r.URL.Path,
 	}
-	if err := templates.ExecuteTemplate(w, "404.html", data); err != nil {
+	var buf bytes.Buffer
+	if err := templates.ExecuteTemplate(&buf, "404.html", data); err != nil {
+		log.Printf("render 404.html: %v", err)
 		http.Error(w, "Page not found", http.StatusNotFound)
+		return
 	}
+	w.WriteHeader(http.StatusNotFound)
+	_, _ = buf.WriteTo(w)
 }
 
 func mcpHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		w.Header().Set("Cache-Control", "no-store, max-age=0")
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := templates.ExecuteTemplate(w, "mcp-matrix.html", nil); err != nil {
-			http.Error(w, "Failed to render MCP easter egg", http.StatusInternalServerError)
-		}
+		renderTemplate(w, "mcp-matrix.html", nil, "Failed to render MCP easter egg")
 		return
 	}
 	if r.Method != http.MethodPost {
@@ -353,6 +416,8 @@ func mcpHandler(w http.ResponseWriter, r *http.Request) {
 			"tools": []map[string]any{
 				mcpTool("get_resume_generator_guide", "Explains Verbose Resume and the Markdown verbose-resume workflow."),
 				mcpTool("get_verbose_resume_format", "Returns the Markdown structure for verboseResume.md (source of truth)."),
+				mcpTool("get_verbose_resume_questions", "Returns sample interview questions and an LLM interviewer prompt for filling verboseResume.md."),
+				mcpTool("get_example_verbose_resume", "Returns a fictional, very verbose example verboseResume.md for structure reference."),
 				mcpTool("get_upload_json_format", "Returns the upload JSON format expected by Verbose Resume."),
 				mcpTool("get_llm_prompt_guide", "Returns prompt guidance for turning a verbose Markdown resume into final upload JSON."),
 				mcpCreateArtifactTool(),
@@ -411,9 +476,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		Templates:            templateOptions,
 		ResumeJSON:           string(upload.ResumeJSON),
 	}
-	if err := templates.ExecuteTemplate(w, "resume-page.html", pageData); err != nil {
-		http.Error(w, "Failed to render resume page", http.StatusInternalServerError)
-	}
+	renderTemplate(w, "resume-page.html", pageData, "Failed to render resume page")
 }
 
 func parseUpload(r *http.Request) (UploadData, error) {
@@ -567,6 +630,10 @@ func handleMCPToolCall(w http.ResponseWriter, req mcpRequest) {
 		text = resumeGeneratorGuide
 	case "get_verbose_resume_format":
 		text = loadVerboseResumeFormatDoc()
+	case "get_verbose_resume_questions":
+		text = loadVerboseResumeQuestionsDoc()
+	case "get_example_verbose_resume":
+		text = loadExampleVerboseResumeDoc()
 	case "get_upload_json_format":
 		text = uploadJSONGuide
 	case "get_llm_prompt_guide":

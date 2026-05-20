@@ -113,9 +113,17 @@ When applying for a job:
 2. Ask the LLM to output **only** valid upload JSON—no invented facts.
 3. Upload that JSON to Verbose Resume, preview, revise the JSON with your LLM if needed, then print or save PDF.
 
+## Sample questions
+
+Interview yourself—or use an LLM as a one-question-at-a-time interviewer—to fill gaps before they fade.
+
+See [`VERBOSE-RESUME-QUESTIONS.md`](VERBOSE-RESUME-QUESTIONS.md) for prompts about employers, first teams, team moves, cross-team work, projects, incidents, and metrics. Includes a copy-paste **LLM interviewer** system prompt.
+
 ## Example
 
-See `verboseResume.md` in this repository for a full conversion from the legacy YAML format.
+See [`example-verbose-resume.md`](example-verbose-resume.md) for a **fictional**, very verbose sample (Meridian Analytics / Lattice Systems / Northwind Digital). Use it for heading structure and level of detail—not as real experience.
+
+Your private `verboseResume.md` stays out of git; see `.gitignore`.
 
 ## Legacy YAML
 
