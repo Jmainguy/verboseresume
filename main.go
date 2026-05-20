@@ -52,6 +52,7 @@ type TemplateOption struct {
 
 type SiteChrome struct {
 	SiteName    string
+	SiteURL     string
 	ActivePage  string
 	FooterClass string
 	FooterExtra string
@@ -229,6 +230,7 @@ var templates = loadTemplates()
 func newSiteChrome(activePage, footerClass, footerExtra string) SiteChrome {
 	return SiteChrome{
 		SiteName:    siteName,
+		SiteURL:     siteURL,
 		ActivePage:  activePage,
 		FooterClass: footerClass,
 		FooterExtra: footerExtra,
@@ -401,7 +403,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	pageData := ResumePageData{
-		Chrome: newSiteChrome("resume", "app-shell app-footer no-print", ""),
+		Chrome:               newSiteChrome("resume", "app-shell app-footer no-print", ""),
 		Resume:               resume,
 		Content:              content,
 		TemplateName:         displayTemplateName,
@@ -417,7 +419,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 func parseUpload(r *http.Request) (UploadData, error) {
 	reader, err := r.MultipartReader()
 	if err != nil {
-		return UploadData{}, fmt.Errorf("Expected multipart form upload")
+		return UploadData{}, fmt.Errorf("expected multipart form upload")
 	}
 
 	var upload UploadData
@@ -427,20 +429,20 @@ func parseUpload(r *http.Request) (UploadData, error) {
 			break
 		}
 		if err != nil {
-			return UploadData{}, fmt.Errorf("Failed to read upload")
+			return UploadData{}, fmt.Errorf("failed to read upload")
 		}
 
 		switch part.FormName() {
 		case "resume":
 			data, err := readPart(part)
 			if err != nil {
-				return UploadData{}, fmt.Errorf("Failed to read resume JSON")
+				return UploadData{}, fmt.Errorf("failed to read resume JSON")
 			}
 			upload.ResumeJSON = data
 		case "resume_json":
 			data, err := readPart(part)
 			if err != nil {
-				return UploadData{}, fmt.Errorf("Failed to read resume JSON")
+				return UploadData{}, fmt.Errorf("failed to read resume JSON")
 			}
 			if strings.TrimSpace(string(data)) != "" {
 				upload.ResumeJSON = data
@@ -448,13 +450,13 @@ func parseUpload(r *http.Request) (UploadData, error) {
 		case "template":
 			data, err := readPart(part)
 			if err != nil {
-				return UploadData{}, fmt.Errorf("Failed to read template selection")
+				return UploadData{}, fmt.Errorf("failed to read template selection")
 			}
 			upload.TemplateName = strings.TrimSpace(string(data))
 		case "custom_template":
 			data, err := readPart(part)
 			if err != nil {
-				return UploadData{}, fmt.Errorf("Failed to read custom template")
+				return UploadData{}, fmt.Errorf("failed to read custom template")
 			}
 			if strings.TrimSpace(string(data)) == "" {
 				continue
@@ -467,14 +469,14 @@ func parseUpload(r *http.Request) (UploadData, error) {
 	}
 
 	if len(upload.ResumeJSON) == 0 {
-		return UploadData{}, fmt.Errorf("Resume JSON is required")
+		return UploadData{}, fmt.Errorf("resume JSON is required")
 	}
 
 	return upload, nil
 }
 
 func readPart(part *multipart.Part) ([]byte, error) {
-	defer part.Close()
+	defer func() { _ = part.Close() }()
 	return io.ReadAll(part)
 }
 
@@ -821,16 +823,6 @@ func safeArtifactBaseName(value string) string {
 		return "resume"
 	}
 	return b.String()
-}
-
-func nonEmpty(values []string) []string {
-	out := make([]string, 0, len(values))
-	for _, value := range values {
-		if value = strings.TrimSpace(value); value != "" {
-			out = append(out, value)
-		}
-	}
-	return out
 }
 
 func writeMCPResult(w http.ResponseWriter, id any, result any) {
