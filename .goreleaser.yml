@@ -41,6 +41,8 @@ kos:
   - main: .
     id: verboseresume
     base_image: cgr.dev/chainguard/static
+    repositories:
+      - zot.soh.re/verboseresume
     platforms:
       - linux/amd64
       - linux/arm64

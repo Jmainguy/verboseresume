@@ -1,7 +1,7 @@
 .PHONY: all test build build-prod run clean docker
 
 BINARY ?= verboseresume
-IMAGE ?= ghcr.io/jmainguy/verboseresume
+IMAGE ?= zot.soh.re/verboseresume/verboseresume
 
 all: test build
 

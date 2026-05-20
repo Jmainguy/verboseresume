@@ -221,7 +221,7 @@ docker build -t verboseresume:local .
 docker run --rm -p 8080:8080 -e PORT=8080 verboseresume:local
 ```
 
-Published images (on release): `ghcr.io/jmainguy/verboseresume:latest`
+Published images (on release): `zot.soh.re/verboseresume/verboseresume:latest`
 
 ## CI and release
 
