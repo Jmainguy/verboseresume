@@ -57,4 +57,4 @@ kos:
       org.opencontainers.image.title: verboseresume
       org.opencontainers.image.description: "Verbose Resume — tailor career JSON into printable HTML resumes"
       org.opencontainers.image.source: "https://github.com/jmainguy/verboseresume"
-      org.opencontainers.image.licenses: MIT
+      org.opencontainers.image.licenses: GPL-2.0-only

@@ -13,6 +13,8 @@ Full Markdown structure and maintenance rules: [`docs/VERBOSE-RESUME.md`](docs/V
 
 Brand assets and colors: [`BRAND.md`](BRAND.md) (`static/brand/`).
 
+Contributing: fork the repo and open a PR from your fork—see [/contribute](https://verboseresume.com/contribute) for templates, docs, and workflow tips (no direct write access). Licensed under **GNU GPLv2** ([`LICENSE`](LICENSE)).
+
 ## The core idea
 
 Write one very verbose resume that captures more context than any one application should include.
@@ -243,6 +245,8 @@ docker run --rm -p 8080:8080 -e PORT=8080 verboseresume:local
 Published images (on release): `zot.soh.re/verboseresume/verboseresume:latest`
 
 ## Contributing
+
+See **[verboseresume.com/contribute](https://verboseresume.com/contribute)** for the fork-and-PR workflow, resume templates, and what we are looking for. We do not grant push access to the upstream repo. Contributions are licensed under **GNU GPLv2** ([`LICENSE`](LICENSE)).
 
 ### Repository rules
 

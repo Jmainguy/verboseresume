@@ -53,9 +53,15 @@ type TemplateOption struct {
 type SiteChrome struct {
 	SiteName    string
 	SiteURL     string
+	GitHubRepo  string
 	ActivePage  string
 	FooterClass string
 	FooterExtra string
+}
+
+type ContributeData struct {
+	Chrome    SiteChrome
+	Templates []TemplateOption
 }
 
 type FormData struct {
@@ -128,6 +134,7 @@ const maxUploadBytes = 5 << 20
 
 const siteName = "Verbose Resume"
 const siteURL = "https://verboseresume.com"
+const githubRepoURL = "https://github.com/Jmainguy/verboseresume"
 const siteTagline = "Keep one detailed career record. Tailor it for every role."
 
 const resumeGeneratorGuide = `# Verbose Resume guide
@@ -267,6 +274,7 @@ func newSiteChrome(activePage, footerClass, footerExtra string) SiteChrome {
 	return SiteChrome{
 		SiteName:    siteName,
 		SiteURL:     siteURL,
+		GitHubRepo:  githubRepoURL,
 		ActivePage:  activePage,
 		FooterClass: footerClass,
 		FooterExtra: footerExtra,
@@ -295,6 +303,7 @@ func main() {
 
 	http.HandleFunc("/", uploadFormHandler)
 	http.HandleFunc("/docs", docsHandler)
+	http.HandleFunc("/contribute", contributeHandler)
 	http.HandleFunc("/docs/embed/verbose-resume-questions.md", verboseResumeQuestionsHandler)
 	http.HandleFunc("/docs/embed/example-verbose-resume.md", exampleVerboseResumeHandler)
 	http.HandleFunc("/mcp", mcpHandler)
@@ -342,6 +351,14 @@ func docsHandler(w http.ResponseWriter, r *http.Request) {
 		PromptMarkdown:        llmPromptGuide,
 		VerboseResumeMarkdown: loadVerboseResumeFormatDoc(),
 	}, "Failed to render docs")
+}
+
+func contributeHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-store, max-age=0")
+	renderTemplate(w, "contribute.html", ContributeData{
+		Chrome:    newSiteChrome("contribute", "", ""),
+		Templates: templateOptions,
+	}, "Failed to render contribute page")
 }
 
 func verboseResumeQuestionsHandler(w http.ResponseWriter, r *http.Request) {

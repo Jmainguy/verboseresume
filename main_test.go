@@ -179,6 +179,33 @@ func TestDocsHandler(t *testing.T) {
 	}
 }
 
+func TestContributeHandler(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/contribute", nil)
+	rec := httptest.NewRecorder()
+
+	contributeHandler(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusOK, rec.Code, rec.Body.String())
+	}
+
+	body := rec.Body.String()
+	for _, want := range []string{
+		`Contribute`,
+		`pull request`,
+		`fork-only`,
+		`do not add collaborators`,
+		`New resume templates`,
+		`templateOptions`,
+		`GPLv2`,
+		`https://github.com/Jmainguy/verboseresume`,
+		`classic.html`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("rendered contribute page did not contain %q", want)
+		}
+	}
+}
+
 func TestFaviconHandler(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/favicon.ico", nil)
 	rec := httptest.NewRecorder()
