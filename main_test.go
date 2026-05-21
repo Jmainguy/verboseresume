@@ -54,6 +54,38 @@ func TestUploadHandlerWrapsBuiltInTemplate(t *testing.T) {
 	}
 }
 
+func TestUploadHandlerAcceptsResumeJSONWithoutFile(t *testing.T) {
+	body, contentType := multipartResumeOnly(t, testResumeJSON, "compact.html")
+
+	req := httptest.NewRequest(http.MethodPost, "/upload", body)
+	req.Header.Set("Content-Type", contentType)
+	rec := httptest.NewRecorder()
+
+	uploadHandler(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusOK, rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "Test Person") {
+		t.Fatal("expected sample resume name in rendered page")
+	}
+}
+
+func multipartResumeOnly(t *testing.T, resumeJSON, template string) (*bytes.Buffer, string) {
+	t.Helper()
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	if err := writer.WriteField("resume_json", resumeJSON); err != nil {
+		t.Fatal(err)
+	}
+	if err := writer.WriteField("template", template); err != nil {
+		t.Fatal(err)
+	}
+	if err := writer.Close(); err != nil {
+		t.Fatal(err)
+	}
+	return &body, writer.FormDataContentType()
+}
+
 func TestUploadHandlerSwitchesTemplateFromHiddenJSON(t *testing.T) {
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
@@ -161,6 +193,10 @@ func TestDocsHandler(t *testing.T) {
 	for _, want := range []string{
 		`Verbose Resume`,
 		`verboseResume.md`,
+		`Start here`,
+		`Long memory`,
+		`href="/try-sample"`,
+		`#verbose-resume-idea`,
 		`The verbose resume idea`,
 		`verbose-resume-questions`,
 		`example-verbose-resume`,
@@ -175,6 +211,52 @@ func TestDocsHandler(t *testing.T) {
 	} {
 		if !strings.Contains(rec.Body.String(), want) {
 			t.Fatalf("rendered docs did not contain %q", want)
+		}
+	}
+}
+
+func TestUploadFormHandlerHome(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+
+	uploadFormHandler(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusOK, rec.Code, rec.Body.String())
+	}
+
+	body := rec.Body.String()
+	for _, want := range []string{
+		`First time here`,
+		`href="/docs"`,
+		`Read the docs first`,
+		`Try sample resume`,
+		`id="try-sample-link"`,
+		`href="/try-sample"`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("home page did not contain %q", want)
+		}
+	}
+}
+
+func TestSamplePreviewHandler(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/try-sample", nil)
+	rec := httptest.NewRecorder()
+
+	samplePreviewHandler(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusOK, rec.Code, rec.Body.String())
+	}
+
+	body := rec.Body.String()
+	for _, want := range []string{
+		`Alex Engineer`,
+		`resume-template-clean`,
+		`id="template-switch"`,
+		`WYSIWYG edit mode`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("sample preview did not contain %q", want)
 		}
 	}
 }

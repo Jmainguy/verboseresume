@@ -187,6 +187,100 @@
       color: #1e3a8a;
     }
 
+    .docs-hero-cta {
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .docs-hero-cta h2 {
+      margin: 0 0 10px;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+      color: #0f67b7;
+    }
+
+    .docs-hero-cta p,
+    .docs-hero-cta li {
+      color: #38475b;
+    }
+
+    .docs-hero-cta ul.philosophy-points {
+      margin: 0 0 16px;
+      padding-left: 1.2rem;
+    }
+
+    .docs-hero-cta li {
+      margin-bottom: 0.45rem;
+    }
+
+    .cta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 16px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .cta-pills a {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      border: 1px solid #93c5fd;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .cta-pills a:hover {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .docs-hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      text-decoration: none;
+    }
+
+    .cta-button.primary {
+      border: 1px solid #1578d6;
+      background: linear-gradient(135deg, #1684e8, #0f5fb6);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(22, 132, 232, 0.28);
+    }
+
+    .cta-button.primary:hover {
+      color: #fff;
+    }
+
+    .cta-button.muted {
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+    }
+
+    .cta-button.muted:hover {
+      color: #334155;
+    }
+
     @media (max-width: 720px) {
       .hero,
       .card {
@@ -214,6 +308,11 @@
         font-size: 0.78rem;
         padding: 12px;
       }
+
+      .docs-hero-actions .cta-button {
+        flex: 1 1 auto;
+        min-height: 44px;
+      }
     }
   </style>
 </head>
@@ -225,6 +324,30 @@
       <p class="kicker">Docs</p>
       <h1>Build resumes from a long memory.</h1>
       <p>Verbose Resume is for people who want one truthful, detailed source resume and many focused, polished final resumes. Keep the raw material in Markdown (<code>verboseResume.md</code>), ask an LLM to tailor it for a specific job, then upload the final JSON here and print.</p>
+
+      <div class="docs-hero-cta" id="start-here">
+        <h2>Start here</h2>
+        <p>If you landed on the <a href="/">generator</a> without a <code>.json</code> file, that is normal. This page is the map—read it once before you upload anything.</p>
+        <ul class="philosophy-points">
+          <li><strong>Long memory</strong> — maintain a private <code>verboseResume.md</code> with more detail than any one-page resume should show (projects, metrics, tools, context).</li>
+          <li><strong>Short output</strong> — for each job, your LLM compresses that file into <strong>upload JSON</strong> matched to the role. You iterate on JSON in chat, not in Word.</li>
+          <li><strong>Print here</strong> — upload JSON on the generator, pick a template, preview, and save PDF. Do not upload the Markdown verbose file to this site.</li>
+        </ul>
+        <p>Jump to the section you need:</p>
+        <ul class="cta-pills">
+          <li><a href="#verbose-resume-idea">Workflow (8 steps)</a></li>
+          <li><a href="#upload-json-format">Upload JSON format</a></li>
+          <li><a href="#verbose-resume-questions">Interview questions</a></li>
+          <li><a href="#example-verbose-resume">Example verbose resume</a></li>
+          <li><a href="/try-sample">Try sample resume</a></li>
+        </ul>
+        <div class="docs-hero-actions">
+          <a class="cta-button primary" href="/try-sample">Try sample resume (no upload)</a>
+          <a class="cta-button muted" href="/">I have JSON — open generator</a>
+          <a class="cta-button muted" href="/contribute">Contribute a template</a>
+        </div>
+      </div>
+
       <p class="callout">The app processes uploads in memory for the current request. It does not save uploaded resume JSON or custom templates.</p>
     </header>
 
@@ -235,7 +358,7 @@
         <p>It is shared as a free community tool.</p>
       </section>
 
-      <section class="card full">
+      <section class="card full" id="verbose-resume-idea">
         <h2>The verbose resume idea</h2>
         <ol class="steps">
           <li>Maintain a private <code>verboseResume.md</code> with more detail than any final resume should include.</li>

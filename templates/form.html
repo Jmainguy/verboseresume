@@ -131,6 +131,84 @@
       font-weight: 800;
     }
 
+    .start-banner {
+      margin-bottom: 20px;
+      padding: 20px 22px;
+      border: 1px solid #bae6fd;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(236, 254, 255, 0.94));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .start-banner h2 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      color: #0f67b7;
+    }
+
+    .start-banner p {
+      margin: 0 0 14px;
+      color: #38475b;
+      line-height: 1.5;
+    }
+
+    .start-banner code {
+      padding: 0.1rem 0.28rem;
+      border-radius: 6px;
+      background: #edf5ff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+      color: #164e86;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .cta-button.primary {
+      border: 1px solid #1578d6;
+      background: linear-gradient(135deg, #1684e8, #0f5fb6);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(22, 132, 232, 0.28);
+    }
+
+    .cta-button.primary:hover {
+      color: #fff;
+    }
+
+    .start-banner .cta-button.secondary {
+      border: 1px solid #93c5fd;
+      background: #fff;
+      color: #1e40af;
+      box-shadow: 0 4px 14px rgba(70, 163, 255, 0.12);
+    }
+
+    .start-banner .cta-button.secondary:hover {
+      background: #f0f7ff;
+      color: #1d4ed8;
+    }
+
     .hero-side {
       display: grid;
       gap: 14px;
@@ -346,6 +424,41 @@
       background: linear-gradient(135deg, #1f91f5, var(--blue-dark));
     }
 
+    .sample-actions {
+      margin-bottom: 1.25rem;
+    }
+
+    a.try-sample-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px 20px;
+      border: 1px dashed #7ea8d8;
+      border-radius: 16px;
+      background: #f8fbff;
+      color: #154b82;
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    a.try-sample-link:hover {
+      border-color: var(--blue);
+      border-style: solid;
+      background: #eff6ff;
+      color: #0f5fb6;
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .sample-hint {
+      margin: 0 0 1rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
     @media (max-width: 720px) {
       .hero-copy,
       form,
@@ -377,8 +490,19 @@
         font-size: 0.9rem;
       }
 
-      button {
+      button,
+      a.try-sample-link {
         min-height: 48px;
+      }
+
+      .start-banner {
+        padding: 16px 18px;
+        border-radius: 18px;
+      }
+
+      .cta-button {
+        flex: 1 1 auto;
+        min-height: 44px;
       }
     }
   </style>
@@ -396,10 +520,19 @@
       </section>
     </header>
 
+    <aside class="start-banner" aria-label="New here?">
+      <h2>First time here? You probably do not have JSON yet.</h2>
+      <p>This generator needs a <strong>tailored upload JSON</strong> file—not a Word doc or a raw career dump. The docs explain the philosophy (one long <code>verboseResume.md</code>, many short JSON resumes) and how to get JSON from your agent or LLM.</p>
+      <div class="cta-row">
+        <a class="cta-button primary" href="/docs">Read the docs first</a>
+        <a class="cta-button secondary" href="/try-sample">Try sample resume</a>
+      </div>
+    </aside>
+
     <section class="upload-layout" aria-label="Generate a resume">
       <div class="panel-copy">
-        <h2>Make the resume, then make it yours.</h2>
-        <p>Start with structured data, choose a layout, tweak the result in the browser, and save it as a PDF when it looks right.</p>
+        <h2>Already have upload JSON?</h2>
+        <p>Choose a layout, preview in the browser, tweak if needed, and save as a PDF. New to the workflow? <a href="/docs">Start on the docs page</a>.</p>
         <ul class="feature-list">
           <li>Clean, compact, and classic templates.</li>
           <li>WYSIWYG edit mode for last-mile copy and spacing fixes.</li>
@@ -408,17 +541,8 @@
 
       <form action="/upload" method="post" enctype="multipart/form-data">
         <div class="form-heading">
-          <h2>Generate your resume</h2>
-          <p>Drop in a JSON resume and pick the style that fits the opportunity.</p>
-        </div>
-
-        <div class="field">
-          <p class="json-spec-link"><a href="/docs#upload-json-format">View expected JSON structure</a></p>
-          <div class="field-label">Resume JSON</div>
-          <div class="file-picker-row" data-drop-target="resume">
-            <input id="resume" type="file" name="resume" accept=".json,application/json" required>
-            <span class="file-name" id="resume-file-name">No file selected</span>
-          </div>
+          <h2>Upload tailored JSON</h2>
+          <p>When your JSON is ready, drop it here. No file yet? Pick a template and preview the built-in sample (fictional data, no upload).</p>
         </div>
 
         <div class="field">
@@ -434,6 +558,20 @@
               <input id="custom_template" type="file" name="custom_template" accept=".html,text/html">
               <span class="file-name" id="template-file-name">No file selected</span>
             </div>
+          </div>
+        </div>
+
+        <p class="sample-hint">Uses the template selected above. Custom templates are not available for the sample.</p>
+        <div class="sample-actions">
+          <a class="try-sample-link" href="/try-sample" id="try-sample-link">Try sample resume</a>
+        </div>
+
+        <div class="field">
+          <p class="json-spec-link"><a href="/docs#upload-json-format">Expected JSON structure (docs)</a></p>
+          <div class="field-label">Resume JSON</div>
+          <div class="file-picker-row" data-drop-target="resume">
+            <input id="resume" type="file" name="resume" accept=".json,application/json" required>
+            <span class="file-name" id="resume-file-name">No file selected</span>
           </div>
         </div>
 
@@ -505,9 +643,29 @@
       document.querySelectorAll("[data-drop-target]").forEach(bindDropTarget);
 
       var templateSelect = document.getElementById("template");
+      var trySampleLink = document.getElementById("try-sample-link");
+
+      function samplePreviewURL() {
+        var template = templateSelect ? templateSelect.value : "clean.html";
+        if (template === "custom") {
+          template = "clean.html";
+        }
+        return "/try-sample?template=" + encodeURIComponent(template);
+      }
+
+      function syncSampleLink() {
+        if (trySampleLink) {
+          trySampleLink.href = samplePreviewURL();
+        }
+      }
+
       if (templateSelect) {
-        templateSelect.addEventListener("change", syncTemplateField);
+        templateSelect.addEventListener("change", function () {
+          syncTemplateField();
+          syncSampleLink();
+        });
         syncTemplateField();
+        syncSampleLink();
       }
     })();
   </script>

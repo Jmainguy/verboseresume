@@ -308,6 +308,7 @@ func main() {
 	http.HandleFunc("/docs/embed/example-verbose-resume.md", exampleVerboseResumeHandler)
 	http.HandleFunc("/mcp", mcpHandler)
 	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/try-sample", samplePreviewHandler)
 	http.HandleFunc("/favicon.ico", faviconHandler)
 	http.Handle("/static/", staticHandler)
 
@@ -448,6 +449,70 @@ func mcpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func loadSampleResumeJSON() ([]byte, error) {
+	return embeddedStatic.ReadFile("static/sample-upload.json")
+}
+
+func renderResumePageResponse(w http.ResponseWriter, resumeJSON []byte, templateName string, customTemplate []byte, customTemplateName string) {
+	if templateName == "custom" && len(customTemplate) == 0 {
+		http.Error(w, "Choose an HTML file for the Custom template.", http.StatusBadRequest)
+		return
+	}
+
+	var resume Resume
+	if err := json.Unmarshal(resumeJSON, &resume); err != nil {
+		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		return
+	}
+
+	selectedTemplate := templateName
+	if selectedTemplate != "custom" {
+		selectedTemplate = safeTemplateName(selectedTemplate)
+	} else {
+		selectedTemplate = templateOptions[0].File
+	}
+
+	content, displayTemplateName, err := renderResumeContent(resume, selectedTemplate, customTemplateName, customTemplate)
+	if err != nil {
+		http.Error(w, "Failed to render resume template", http.StatusBadRequest)
+		return
+	}
+
+	renderTemplate(w, "resume-page.html", ResumePageData{
+		Chrome:               newSiteChrome("resume", "app-shell app-footer no-print", ""),
+		Resume:               resume,
+		Content:              content,
+		TemplateName:         displayTemplateName,
+		SelectedTemplateName: selectedTemplate,
+		Templates:            templateOptions,
+		ResumeJSON:           string(resumeJSON),
+	}, "Failed to render resume page")
+}
+
+func samplePreviewHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.Header().Set("Cache-Control", "no-store, max-age=0")
+
+	resumeJSON, err := loadSampleResumeJSON()
+	if err != nil {
+		log.Printf("load sample resume: %v", err)
+		http.Error(w, "Sample resume unavailable", http.StatusInternalServerError)
+		return
+	}
+
+	templateName := strings.TrimSpace(r.URL.Query().Get("template"))
+	if templateName == "" {
+		templateName = "clean.html"
+	}
+
+	renderResumePageResponse(w, resumeJSON, templateName, nil, "")
+}
+
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -461,40 +526,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if upload.TemplateName == "custom" && len(upload.CustomTemplate) == 0 {
-		http.Error(w, "Choose an HTML file for the Custom template.", http.StatusBadRequest)
-		return
-	}
 
-	var resume Resume
-	if err := json.Unmarshal(upload.ResumeJSON, &resume); err != nil {
-		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
-		return
-	}
-
-	templateName := upload.TemplateName
-	if templateName != "custom" {
-		templateName = safeTemplateName(templateName)
-	} else {
-		templateName = templateOptions[0].File
-	}
-
-	content, displayTemplateName, err := renderResumeContent(resume, templateName, upload.CustomTemplateName, upload.CustomTemplate)
-	if err != nil {
-		http.Error(w, "Failed to render resume template", http.StatusBadRequest)
-		return
-	}
-
-	pageData := ResumePageData{
-		Chrome:               newSiteChrome("resume", "app-shell app-footer no-print", ""),
-		Resume:               resume,
-		Content:              content,
-		TemplateName:         displayTemplateName,
-		SelectedTemplateName: templateName,
-		Templates:            templateOptions,
-		ResumeJSON:           string(upload.ResumeJSON),
-	}
-	renderTemplate(w, "resume-page.html", pageData, "Failed to render resume page")
+	renderResumePageResponse(w, upload.ResumeJSON, upload.TemplateName, upload.CustomTemplate, upload.CustomTemplateName)
 }
 
 func parseUpload(r *http.Request) (UploadData, error) {
@@ -519,7 +552,9 @@ func parseUpload(r *http.Request) (UploadData, error) {
 			if err != nil {
 				return UploadData{}, fmt.Errorf("failed to read resume JSON")
 			}
-			upload.ResumeJSON = data
+			if strings.TrimSpace(string(data)) != "" {
+				upload.ResumeJSON = data
+			}
 		case "resume_json":
 			data, err := readPart(part)
 			if err != nil {
