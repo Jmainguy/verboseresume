@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ template "site-head-icons" . }}
   <title>MCP // Verbose Resume</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,17 +25,18 @@
       bottom: 8%;
       transform: translateX(-50%);
       z-index: 2;
-      max-width: 90vw;
-      padding: 14px 20px;
+      max-width: min(90vw, 40rem);
+      max-height: 46vh;
+      padding: 14px 18px 16px;
       border: 1px solid rgba(110, 231, 249, 0.35);
       border-radius: 12px;
-      background: rgba(0, 0, 0, 0.72);
+      background: rgba(0, 0, 0, 0.78);
       color: #6ee7f9;
       font-size: clamp(0.75rem, 2vw, 0.9rem);
-      text-align: center;
       line-height: 1.5;
       text-shadow: 0 0 8px rgba(110, 231, 249, 0.5);
-      pointer-events: none;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .overlay strong {
       display: block;
@@ -42,15 +44,47 @@
       color: #46a3ff;
       font-size: 1.05em;
       letter-spacing: 0.08em;
+      text-align: center;
+    }
+    .overlay .tagline {
+      margin: 0 0 12px;
+      text-align: center;
+      color: rgba(110, 231, 249, 0.88);
+    }
+    .overlay .prompt-label {
+      margin: 0 0 6px;
+      font-size: 0.78em;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      color: rgba(248, 200, 92, 0.9);
+    }
+    .agent-prompt {
+      margin: 0;
+      padding: 10px 12px;
+      border: 1px dashed rgba(110, 231, 249, 0.4);
+      border-radius: 8px;
+      background: rgba(8, 17, 31, 0.85);
+      color: #e8f7ff;
+      font-size: 0.86em;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      cursor: text;
+      user-select: all;
     }
   </style>
 </head>
 <body>
   <canvas id="matrix" aria-hidden="true"></canvas>
-  <p class="overlay">
+  <div class="overlay">
     <strong>POST /mcp</strong>
-    JSON-RPC only. You found the verbose endpoint—the browser is not the client.
-  </p>
+    <p class="tagline">JSON-RPC only—you found the verbose endpoint. The browser is not the client.</p>
+    <p class="prompt-label">Give your agent</p>
+    <pre class="agent-prompt">Connect to the Verbose Resume MCP at https://verboseresume.com/mcp (POST JSON-RPC). List the available tools, call get_resume_generator_guide first, then read get_verbose_resume_format, get_upload_json_format, and get_llm_prompt_guide. Summarize the workflow: how I maintain verboseResume.md, tailor upload JSON for a job, and preview or print at https://verboseresume.com.</pre>
+  </div>
   <script>
     (function () {
       var canvas = document.getElementById("matrix");

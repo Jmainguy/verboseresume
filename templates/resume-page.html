@@ -7,6 +7,7 @@
   <title>{{ .Resume.Name }} - Resume</title>
   <style>
     {{ template "site-chrome-css" . }}
+    {{ template "site-mobile-css" . }}
     .site-chrome-shell {
       max-width: 1120px;
       margin: 0 auto;
@@ -230,11 +231,14 @@
 
     #resume-editable {
       width: min(100% - 32px, 980px);
+      max-width: 100%;
       margin: 0 auto 26px;
       background: var(--resume-paper);
       box-shadow: 0 18px 55px rgba(15, 23, 42, 0.14);
       position: relative;
       z-index: 1;
+      min-width: 0;
+      overflow-x: clip;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -245,10 +249,140 @@
       -webkit-print-color-adjust: exact;
     }
 
-    #resume-editable.is-editing {
+      #resume-editable.is-editing {
       outline: 3px dashed var(--app-green);
       outline-offset: 8px;
       border-radius: 4px;
+    }
+
+    @media (max-width: 720px) {
+      .site-chrome-shell {
+        padding: 16px 14px 0;
+      }
+
+      .app-header {
+        padding: 12px 14px 8px;
+      }
+
+      .app-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 18px;
+      }
+
+      .app-badge {
+        white-space: normal;
+        text-align: left;
+        line-height: 1.35;
+      }
+
+      .app-toolbar {
+        top: max(8px, env(safe-area-inset-top));
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin: 10px 14px 16px;
+        padding: 12px;
+        border-radius: 16px;
+      }
+
+      .app-toolbar label,
+      .template-switcher,
+      .paper-switcher {
+        width: 100%;
+      }
+
+      .template-switcher,
+      .paper-switcher {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .app-toolbar select {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .app-toolbar button {
+        width: 100%;
+        min-height: 44px;
+      }
+
+      .app-toolbar .hint {
+        flex: none;
+        font-size: 0.88rem;
+      }
+
+      footer.app-footer {
+        margin-left: auto;
+        margin-right: auto;
+        width: calc(100% - 28px);
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      #resume-editable {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto 20px;
+        box-shadow: 0 10px 32px rgba(15, 23, 42, 0.12);
+      }
+
+      #resume-editable.is-editing {
+        outline-offset: 4px;
+      }
+
+      #resume-editable article {
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+
+      #resume-editable .resume-template-classic,
+      #resume-editable .resume-template-compact,
+      #resume-editable .resume-template-clean {
+        max-width: 100%;
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      #resume-editable .resume-template-classic .contact,
+      #resume-editable .resume-template-compact .contact,
+      #resume-editable .resume-template-clean .contact {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      #resume-editable .resume-template-classic .skill-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 4px;
+      }
+
+      #resume-editable .resume-template-classic .job-heading {
+        flex-wrap: wrap;
+      }
+
+      #resume-editable .resume-template-classic .company-date {
+        white-space: normal;
+      }
+
+      #resume-editable .resume-template-clean .skill-row,
+      #resume-editable .resume-template-compact .skill-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+      }
+
+      #resume-editable .resume-template-clean .skill-row .skill-label,
+      #resume-editable .resume-template-compact .skill-label {
+        min-width: 0;
+      }
+
+      #resume-editable .resume-template-clean .pill {
+        white-space: normal;
+      }
     }
 
     @media print {

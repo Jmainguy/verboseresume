@@ -299,6 +299,7 @@ func main() {
 	http.HandleFunc("/docs/embed/example-verbose-resume.md", exampleVerboseResumeHandler)
 	http.HandleFunc("/mcp", mcpHandler)
 	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/favicon.ico", faviconHandler)
 	http.Handle("/static/", staticHandler)
 
 	addr := listenAddr()

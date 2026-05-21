@@ -7,6 +7,7 @@
   <title>{{ .Chrome.SiteName }} Docs</title>
   <style>
     {{ template "site-chrome-css" . }}
+    {{ template "site-mobile-css" . }}
     :root {
       --bg: #08111f;
       --panel: rgba(255, 255, 255, 0.94);
@@ -76,11 +77,12 @@
     }
 
     h1 {
-      max-width: 12ch;
+      max-width: 14ch;
       margin: 0 0 18px;
-      font-size: clamp(42px, 8vw, 76px);
-      line-height: 0.92;
-      letter-spacing: -0.07em;
+      font-size: clamp(2rem, 8vw, 3.75rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      overflow-wrap: anywhere;
     }
 
     h2 {
@@ -111,13 +113,16 @@
     }
 
     pre {
-      overflow-x: auto;
+      max-width: 100%;
       padding: 16px;
       border: 1px solid #d7e3f2;
       border-radius: 16px;
       background: #f7fbff;
       color: #172033;
-      white-space: pre;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      overflow-x: clip;
     }
 
     details.doc-fold {
@@ -146,8 +151,14 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 18px;
+    }
+
+    @media (min-width: 820px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .card {
@@ -176,9 +187,32 @@
       color: #1e3a8a;
     }
 
-    @media (max-width: 820px) {
-      .grid {
-        grid-template-columns: 1fr;
+    @media (max-width: 720px) {
+      .hero,
+      .card {
+        border-radius: 20px;
+      }
+
+      .hero {
+        padding: 22px 18px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .callout {
+        padding: 12px 14px;
+        font-size: 0.92rem;
+      }
+
+      .steps {
+        padding-left: 1.1rem;
+      }
+
+      pre {
+        font-size: 0.78rem;
+        padding: 12px;
       }
     }
   </style>
@@ -195,7 +229,7 @@
     </header>
 
     <main class="grid">
-      <section class="card">
+      <section class="card full">
         <h2>Purpose</h2>
         <p>This site turns structured resume JSON into HTML resumes that can be reviewed, lightly edited in the browser, recolored with subtle paper tones, switched between templates, and saved as PDFs.</p>
         <p>It is shared as a free community tool.</p>

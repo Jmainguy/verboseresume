@@ -1,4 +1,5 @@
 {{ define "site-head-icons" }}
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" href="/static/brand/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/static/brand/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="/static/brand/apple-touch-icon.png">
@@ -109,6 +110,111 @@
 
       .site-nav-links {
         justify-content: flex-start;
+        width: 100%;
+      }
+    }
+{{ end }}
+
+{{ define "site-mobile-css" }}
+    html {
+      overflow-x: clip;
+    }
+
+    @media (max-width: 720px) {
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        padding: 16px max(14px, env(safe-area-inset-right)) 28px max(14px, env(safe-area-inset-left));
+        overflow-x: clip;
+      }
+
+      .shell,
+      .site-chrome-shell,
+      .grid,
+      .upload-layout,
+      .hero,
+      .hero-copy,
+      .card,
+      form,
+      .panel-copy {
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      .grid > * {
+        min-width: 0;
+      }
+
+      img,
+      svg,
+      video,
+      iframe,
+      table {
+        max-width: 100%;
+      }
+
+      h1 {
+        max-width: none;
+        font-size: clamp(1.75rem, 8.5vw, 2.35rem);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+        overflow-wrap: anywhere;
+      }
+
+      h2 {
+        font-size: clamp(1.2rem, 5vw, 1.5rem);
+      }
+
+      .site-topbar {
+        margin-bottom: 16px;
+      }
+
+      .site-brand-mark {
+        width: 32px;
+        height: 32px;
+      }
+
+      .site-nav-links a {
+        min-height: 44px;
+        padding: 10px 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .site-footer,
+      footer.app-footer {
+        margin-top: 20px;
+        padding: 14px 16px;
+        font-size: 0.85rem;
+        border-radius: 18px;
+      }
+
+      pre,
+      code {
+        max-width: 100%;
+      }
+
+      pre {
+        font-size: 0.78rem;
+        padding: 12px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        overflow-x: clip;
+      }
+
+      .site-footer p,
+      footer.app-footer p,
+      .path,
+      .byline {
+        overflow-wrap: anywhere;
+      }
+
+      iframe.doc-embed {
+        height: 16rem;
       }
     }
 {{ end }}

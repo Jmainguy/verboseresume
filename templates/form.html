@@ -7,6 +7,7 @@
   <title>{{ .Chrome.SiteName }}</title>
   <style>
     {{ template "site-chrome-css" . }}
+    {{ template "site-mobile-css" . }}
     :root {
       --bg: #08111f;
       --panel: rgba(255, 255, 255, 0.92);
@@ -56,6 +57,7 @@
       margin: 0 auto;
       position: relative;
       z-index: 1;
+      min-width: 0;
     }
 
     .hero {
@@ -98,11 +100,12 @@
       text-transform: uppercase;
     }
     h1 {
-      max-width: 12ch;
-      font-size: clamp(42px, 8vw, 82px);
-      line-height: 0.92;
+      max-width: 14ch;
+      font-size: clamp(2rem, 8vw, 4.5rem);
+      line-height: 0.95;
       margin: 0 0 20px;
-      letter-spacing: -0.07em;
+      letter-spacing: -0.06em;
+      overflow-wrap: anywhere;
     }
     .hero p {
       max-width: 62ch;
@@ -186,9 +189,16 @@
 
     .upload-layout {
       display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
-      gap: 24px;
+      grid-template-columns: 1fr;
+      gap: 20px;
       align-items: start;
+    }
+
+    @media (min-width: 900px) {
+      .upload-layout {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 24px;
+      }
     }
 
     .panel-copy {
@@ -335,10 +345,40 @@
     button:hover {
       background: linear-gradient(135deg, #1f91f5, var(--blue-dark));
     }
-    @media (max-width: 860px) {
-      .hero,
-      .upload-layout {
-        grid-template-columns: 1fr;
+
+    @media (max-width: 720px) {
+      .hero-copy,
+      form,
+      .panel-copy {
+        border-radius: 20px;
+      }
+
+      .hero-copy {
+        padding: 22px 18px;
+      }
+
+      .panel-copy {
+        padding: 18px;
+      }
+
+      form {
+        padding: 20px 18px;
+      }
+
+      .form-heading h2 {
+        font-size: 1.35rem;
+      }
+
+      .file-picker-row {
+        padding: 14px;
+      }
+
+      input[type="file"] {
+        font-size: 0.9rem;
+      }
+
+      button {
+        min-height: 48px;
       }
     }
   </style>

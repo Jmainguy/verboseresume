@@ -39,3 +39,22 @@ func staticFileServer() (http.Handler, error) {
 	}
 	return http.StripPrefix("/static/", http.FileServer(http.FS(sub))), nil
 }
+
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		w.Header().Set("Allow", "GET, HEAD")
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	data, err := embeddedStatic.ReadFile("static/brand/favicon-32.png")
+	if err != nil {
+		http.Error(w, "not found", http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set("Cache-Control", "public, max-age=86400")
+	if r.Method == http.MethodHead {
+		return
+	}
+	_, _ = w.Write(data)
+}

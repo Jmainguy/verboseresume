@@ -179,6 +179,22 @@ func TestDocsHandler(t *testing.T) {
 	}
 }
 
+func TestFaviconHandler(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/favicon.ico", nil)
+	rec := httptest.NewRecorder()
+
+	faviconHandler(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, rec.Code)
+	}
+	if ct := rec.Header().Get("Content-Type"); ct != "image/png" {
+		t.Fatalf("expected Content-Type image/png, got %q", ct)
+	}
+	if len(rec.Body.Bytes()) == 0 {
+		t.Fatal("expected non-empty favicon body")
+	}
+}
+
 func TestMCPHandlerGETShowsMatrix(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/mcp", nil)
 	rec := httptest.NewRecorder()
@@ -194,6 +210,10 @@ func TestMCPHandlerGETShowsMatrix(t *testing.T) {
 		`POST /mcp`,
 		`JSON-RPC`,
 		`verboseResume.json`,
+		`href="/static/brand/favicon.svg"`,
+		`href="/favicon.ico"`,
+		`get_resume_generator_guide`,
+		`Give your agent`,
 	} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("MCP GET response did not contain %q", want)
@@ -220,6 +240,8 @@ func TestNotFoundHandler(t *testing.T) {
 		`Enter the Matrix`,
 		`GET /mcp`,
 		`id="matrix-bg"`,
+		`href="/static/brand/favicon.svg"`,
+		`href="/favicon.ico"`,
 	} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("404 response did not contain %q", want)
